@@ -1,0 +1,320 @@
+{
+  "Site": {
+    "foundation": "Padre Wasson Foundation",
+    "skipToContent": "Skip to content",
+    "menu": "Menu",
+    "closeMenu": "Close menu",
+    "language": "Language",
+    "remembered": "Remembered",
+    "aboutMemorial": "About this memorial",
+    "privacy": "Privacy",
+    "legalNotice": "Legal notice",
+    "mainSite": "padrewassonfoundation.org"
+  },
+  "Overview": {
+    "metaTitle": "Remembered",
+    "metaDescription": "In memory of the children and young people of Padre Wasson's family who have died.",
+    "title": "Remembered",
+    "intro": "Padre Wasson's family is big, and every year we lose some of our brothers and sisters, many of them much too young. Here we remember them: their names, their faces, their stories, and the words of the people who loved them.",
+    "searchLabel": "Name",
+    "searchPlaceholder": "Search by name",
+    "country": "Country",
+    "allCountries": "All countries",
+    "home": "NPH home",
+    "allHomes": "All homes",
+    "year": "Year of passing",
+    "allYears": "All years",
+    "show": "Show",
+    "clear": "Show everyone",
+    "count": "{count, plural, =0 {No one found} one {# person} other {# people}}",
+    "noResults": "We could not find anyone. Try another spelling, or leave out the accents.",
+    "nobodyYet": "There are no pages here yet.",
+    "requestTitle": "Would you like a page for someone?",
+    "requestText": "If someone from Padre Wasson's family has died and you would like to remember them here, write to us.",
+    "requestLink": "Request a memorial page"
+  },
+  "Person": {
+    "born": "Born",
+    "died": "Died",
+    "nphCountry": "NPH {country}",
+    "noPortrait": "No photo yet",
+    "sample": "This is a sample page. The person and the story are invented."
+  },
+  "Memorial": {
+    "photos": "Photos",
+    "photoBy": "Shared by {name}",
+    "openPhoto": "Open photo: {caption}",
+    "openPhotoUntitled": "Open photo {number}",
+    "close": "Close",
+    "previous": "Previous photo",
+    "next": "Next photo",
+    "tributes": "Words from family and friends",
+    "noTributes": "No one has written yet. You can be the first.",
+    "backToOverview": "All remembered"
+  },
+  "Tribute": {
+    "title": "Write something for {name}",
+    "intro": "A memory, a thank-you, a few words to the family. Everything is read by someone from the foundation before it appears here. This can take a few days.",
+    "authorName": "Your name",
+    "authorRelation": "How did you know {name}?",
+    "authorRelationHint": "For example: sister, friend from Miacatlán, volunteer 1998",
+    "message": "Your words",
+    "photo": "A photo",
+    "photoHint": "JPEG, PNG or WebP. We remove location data from photos.",
+    "optional": "optional",
+    "submit": "Send",
+    "sending": "Sending …",
+    "thanks": "Thank you. We will read your words and put them here soon."
+  },
+  "Candle": {
+    "title": "Light a candle",
+    "count": "{count, plural, =0 {No candles yet} one {# candle for {name}} other {# candles for {name}}}",
+    "light": "Light a candle",
+    "addWords": "Add a name or a few words",
+    "authorName": "Your name",
+    "message": "A few words",
+    "messageHint": "Up to 280 characters",
+    "lit": "Your candle is lit.",
+    "litWithWords": "Your candle is lit. Your words will appear once we have read them.",
+    "recent": "Recent candles",
+    "anonymous": "Someone",
+    "sending": "Lighting …"
+  },
+  "Donate": {
+    "title": "In memory of {name}",
+    "text": "If you would like to give something in {name}'s memory, you can support the foundation's work with the grown-up children of Padre Wasson's family. Please write “In memory of {name}” as the reference.",
+    "link": "Donate"
+  },
+  "Request": {
+    "metaTitle": "Request a memorial page",
+    "title": "Request a memorial page",
+    "greeting": "Dear family, dear friends,",
+    "intro": "if someone from Padre Wasson's family has died and you would like a page for them here, please tell us about them. Families and NPH staff can both write to us. We read every request ourselves and will get in touch with you.",
+    "consentNote": "We only publish a page when the family and NPH agree. Nothing you send here is public.",
+    "aboutYou": "About you",
+    "requesterName": "Your name",
+    "requesterEmail": "Your email",
+    "requesterPhone": "Phone or WhatsApp",
+    "requesterRelation": "How are you connected?",
+    "requesterRelationHint": "For example: mother, brother, NPH Honduras staff, godparent",
+    "aboutThem": "About the person",
+    "personName": "Full name",
+    "birthDate": "Born",
+    "deathDate": "Died",
+    "dateHint": "A date or a year, as much as you know",
+    "country": "Country",
+    "chooseCountry": "Choose a country",
+    "otherCountry": "Another country",
+    "home": "NPH home",
+    "story": "Tell us about them",
+    "storyHint": "What was important to them, what do you remember? We will write the page together with you.",
+    "photo": "A photo",
+    "isMinor": "They were younger than 18 when they died.",
+    "familyInformed": "The family knows about this request and agrees.",
+    "submit": "Send request",
+    "sending": "Sending …",
+    "thanks": "Thank you. We have your request and will write to you soon.",
+    "privacyLink": "How we handle your data"
+  },
+  "Forms": {
+    "optional": "optional",
+    "required": "required",
+    "errorSummary": "Please check the following:",
+    "errors": {
+      "required": "Please fill this in.",
+      "tooLong": "This is too long.",
+      "email": "Please enter a valid email address.",
+      "photoType": "Please choose a JPEG, PNG or WebP photo.",
+      "photoSize": "This photo is too large. Please choose one under 8 MB.",
+      "photoBroken": "We could not read this photo. Please try another one.",
+      "tooFast": "That was very quick. Please wait a moment and send again.",
+      "expired": "This form has been open for a long time. Please reload the page and send again.",
+      "rateLimited": "You have sent a lot in a short time. Please try again in an hour.",
+      "spam": "Something went wrong. Please reload the page and try again.",
+      "notFound": "This page is not open for messages.",
+      "server": "Something went wrong on our side. Please try again later, or write to info@padrewassonfoundation.org."
+    }
+  },
+  "Pages": {
+    "draftNote": "Draft. The foundation will replace this text.",
+    "about": {
+      "metaTitle": "About this memorial",
+      "title": "About this memorial",
+      "body": [
+        "Padre Wasson always said that his children are not orphans, because they have a family. This family stays together after the years in the homes, and it stays together when one of us dies.",
+        "On these pages we remember children and young people of Nuestros Pequeños Hermanos who have died. Each page belongs to one person. Family, brothers and sisters from the homes, godparents and volunteers can leave a few words or light a candle.",
+        "A page is only made when the family and NPH agree. Everything that is sent to us is read by someone from the foundation before it appears. Pages for children who died before turning 18 are checked once more before they are published.",
+        "We do not use cookies for tracking and we do not use analytics. If you have questions, or if you would like something changed or removed, write to us at info@padrewassonfoundation.org."
+      ]
+    },
+    "privacy": {
+      "metaTitle": "Privacy",
+      "title": "Privacy",
+      "body": [
+        "This text is a placeholder. The foundation's privacy notice for these pages still has to be written and checked.",
+        "What the memorial does today: it stores the tributes, candles and requests that people send, together with the time they were sent. It does not store IP addresses. To stop abuse it keeps a one-way hash of the address for at most one day. It sets no cookies for visitors; staff who sign in get a session cookie. It does not use analytics or tracking.",
+        "Photos are re-saved before they are stored, which removes location and camera data."
+      ]
+    },
+    "impressum": {
+      "metaTitle": "Legal notice",
+      "title": "Legal notice",
+      "body": [
+        "This text is a placeholder. The legal notice (Impressum) of the Padre Wasson Foundation applies to these pages as well."
+      ],
+      "link": "Legal notice of the Padre Wasson Foundation"
+    }
+  },
+  "NotFound": {
+    "title": "We could not find this page.",
+    "text": "Maybe the link is old, or the page has not been published yet.",
+    "link": "Back to everyone we remember"
+  },
+  "Admin": {
+    "title": "Memorial admin",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+    "email": "Email",
+    "password": "Password",
+    "newPassword": "New password",
+    "setPassword": "Set password",
+    "passwordSaved": "Your password is saved.",
+    "forgotPassword": "Forgot your password?",
+    "sendResetLink": "Send link",
+    "resetLinkSent": "If this address belongs to a staff account, we have sent a link.",
+    "signInFailed": "Email or password is not right.",
+    "notStaff": "This account is not on the staff list. Ask an admin to add you.",
+    "nav": {
+      "overview": "Overview",
+      "memorials": "Memorials",
+      "tributes": "Tributes",
+      "candles": "Candles",
+      "requests": "Requests",
+      "staff": "Staff",
+      "account": "Account"
+    },
+    "dashboard": {
+      "waiting": "Waiting for you",
+      "pendingTributes": "{count, plural, =0 {No tributes to read} one {# tribute to read} other {# tributes to read}}",
+      "pendingCandles": "{count, plural, =0 {No candle messages to read} one {# candle message to read} other {# candle messages to read}}",
+      "newRequests": "{count, plural, =0 {No new requests} one {# new request} other {# new requests}}",
+      "unpublished": "{count, plural, =0 {No memorials waiting} one {# memorial not yet published} other {# memorials not yet published}}"
+    },
+    "role": {
+      "admin": "Admin",
+      "editor": "Editor"
+    },
+    "status": {
+      "draft": "Draft",
+      "pending": "Waiting for consent",
+      "published": "Published",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "new": "New",
+      "in_progress": "In progress",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "hidden": "Hidden"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "hide": "Hide",
+      "show": "Show again",
+      "delete": "Delete",
+      "save": "Save",
+      "edit": "Edit",
+      "preview": "Preview",
+      "view": "View page",
+      "create": "Create",
+      "add": "Add",
+      "upload": "Upload",
+      "remove": "Remove",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "confirmDelete": "Delete for good? This cannot be undone."
+    },
+    "memorials": {
+      "new": "New memorial",
+      "empty": "No memorials yet.",
+      "name": "Name",
+      "slug": "Address",
+      "slugHint": "Lowercase letters, numbers and dashes. Becomes /remembered/…",
+      "birthDate": "Born",
+      "deathDate": "Died",
+      "precision": "Known exactly",
+      "precisionDay": "Day",
+      "precisionMonth": "Month",
+      "precisionYear": "Year only",
+      "country": "Country",
+      "home": "NPH home",
+      "story": "Story",
+      "storyHint": "Plain text. Leave an empty line between paragraphs.",
+      "storyLang": "Language of the story",
+      "portrait": "Portrait",
+      "status": "Status",
+      "consent": "Consent",
+      "consentConfirmed": "The family and NPH have agreed to this page.",
+      "consentNote": "Who agreed, when and how (internal)",
+      "minor": "Died before turning 18",
+      "minorConfirmed": "Admin confirmation for a minor",
+      "minorConfirmedBy": "Confirmed on {date}",
+      "minorConfirm": "I confirm, as admin, that this page may be published.",
+      "minorAdminOnly": "Only an admin can give this confirmation.",
+      "publishBlockedConsent": "Cannot be published yet: consent is not confirmed.",
+      "publishBlockedMinor": "Cannot be published yet: an admin has to confirm the page of a minor.",
+      "sample": "Sample page",
+      "candles": "Candles",
+      "albums": "Albums",
+      "newAlbum": "New album",
+      "albumTitle": "Album title",
+      "albumDescription": "Description",
+      "photos": "Photos",
+      "noAlbum": "Not in an album",
+      "caption": "Caption",
+      "contributedBy": "Shared by",
+      "addPhoto": "Add a photo",
+      "saved": "Saved.",
+      "slugTaken": "This address is already used by another page."
+    },
+    "tributes": {
+      "pending": "Waiting to be read",
+      "recent": "Recently approved",
+      "empty": "Nothing waiting. Thank you.",
+      "for": "For {name}",
+      "relation": "Relation",
+      "photo": "Photo"
+    },
+    "candles": {
+      "pending": "Candle messages waiting to be read",
+      "empty": "Nothing waiting.",
+      "for": "For {name}"
+    },
+    "requests": {
+      "empty": "No requests.",
+      "from": "From",
+      "about": "About",
+      "contact": "Contact",
+      "relation": "Connection",
+      "isMinor": "Younger than 18",
+      "familyInformed": "Family informed",
+      "yes": "Yes",
+      "no": "No",
+      "staffNote": "Internal note",
+      "createMemorial": "Start a memorial page from this request",
+      "openMemorial": "Open the memorial page",
+      "received": "Received {date}"
+    },
+    "staff": {
+      "intro": "Admins can do everything. Editors can read and approve tributes, edit memorials and publish them, but cannot confirm pages of minors or manage staff.",
+      "invite": "Invite someone",
+      "invited": "Invitation sent.",
+      "you": "you",
+      "lastAdmin": "There must always be at least one admin."
+    },
+    "errors": {
+      "generic": "That did not work. Please try again.",
+      "forbidden": "You are not allowed to do this."
+    }
+  }
+}

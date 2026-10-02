@@ -1,0 +1,320 @@
+{
+  "Site": {
+    "foundation": "Padre Wasson Foundation",
+    "skipToContent": "Zum Inhalt springen",
+    "menu": "Menü",
+    "closeMenu": "Menü schließen",
+    "language": "Sprache",
+    "remembered": "In Erinnerung",
+    "aboutMemorial": "Über diese Gedenkseiten",
+    "privacy": "Datenschutz",
+    "legalNotice": "Impressum",
+    "mainSite": "padrewassonfoundation.org"
+  },
+  "Overview": {
+    "metaTitle": "In Erinnerung",
+    "metaDescription": "Wir erinnern an die Kinder und jungen Menschen aus Padre Wassons Familie, die gestorben sind.",
+    "title": "In Erinnerung",
+    "intro": "Padre Wassons Familie ist groß, und jedes Jahr verlieren wir Brüder und Schwestern, viele von ihnen viel zu jung. Hier erinnern wir an sie: an ihre Namen, ihre Gesichter, ihre Geschichten und an die Worte der Menschen, die sie geliebt haben.",
+    "searchLabel": "Name",
+    "searchPlaceholder": "Nach Namen suchen",
+    "country": "Land",
+    "allCountries": "Alle Länder",
+    "home": "NPH-Heim",
+    "allHomes": "Alle Heime",
+    "year": "Todesjahr",
+    "allYears": "Alle Jahre",
+    "show": "Anzeigen",
+    "clear": "Alle anzeigen",
+    "count": "{count, plural, =0 {Niemand gefunden} one {# Person} other {# Personen}}",
+    "noResults": "Wir haben niemanden gefunden. Versuch eine andere Schreibweise oder lass die Akzente weg.",
+    "nobodyYet": "Hier gibt es noch keine Seiten.",
+    "requestTitle": "Möchtest du eine Seite für jemanden?",
+    "requestText": "Wenn jemand aus Padre Wassons Familie gestorben ist und du hier an ihn oder sie erinnern möchtest, schreib uns.",
+    "requestLink": "Eine Gedenkseite anfragen"
+  },
+  "Person": {
+    "born": "Geboren",
+    "died": "Gestorben",
+    "nphCountry": "NPH {country}",
+    "noPortrait": "Noch kein Foto",
+    "sample": "Dies ist eine Beispielseite. Die Person und ihre Geschichte sind erfunden."
+  },
+  "Memorial": {
+    "photos": "Fotos",
+    "photoBy": "Geteilt von {name}",
+    "openPhoto": "Foto öffnen: {caption}",
+    "openPhotoUntitled": "Foto {number} öffnen",
+    "close": "Schließen",
+    "previous": "Vorheriges Foto",
+    "next": "Nächstes Foto",
+    "tributes": "Worte von Familie und Freunden",
+    "noTributes": "Noch hat niemand geschrieben. Du kannst der oder die Erste sein.",
+    "backToOverview": "Alle, an die wir erinnern"
+  },
+  "Tribute": {
+    "title": "Schreib etwas für {name}",
+    "intro": "Eine Erinnerung, ein Dank, ein paar Worte an die Familie. Alles wird von jemandem aus der Stiftung gelesen, bevor es hier erscheint. Das kann ein paar Tage dauern.",
+    "authorName": "Dein Name",
+    "authorRelation": "Woher kanntest du {name}?",
+    "authorRelationHint": "Zum Beispiel: Schwester, Freund aus Miacatlán, Volontärin 1998",
+    "message": "Deine Worte",
+    "photo": "Ein Foto",
+    "photoHint": "JPEG, PNG oder WebP. Ortsdaten entfernen wir aus den Fotos.",
+    "optional": "freiwillig",
+    "submit": "Senden",
+    "sending": "Wird gesendet …",
+    "thanks": "Danke. Wir lesen deine Worte und stellen sie bald hierher."
+  },
+  "Candle": {
+    "title": "Eine Kerze anzünden",
+    "count": "{count, plural, =0 {Noch keine Kerzen} one {# Kerze für {name}} other {# Kerzen für {name}}}",
+    "light": "Eine Kerze anzünden",
+    "addWords": "Einen Namen oder ein paar Worte dazuschreiben",
+    "authorName": "Dein Name",
+    "message": "Ein paar Worte",
+    "messageHint": "Bis zu 280 Zeichen",
+    "lit": "Deine Kerze brennt.",
+    "litWithWords": "Deine Kerze brennt. Deine Worte erscheinen, sobald wir sie gelesen haben.",
+    "recent": "Zuletzt angezündet",
+    "anonymous": "Jemand",
+    "sending": "Wird angezündet …"
+  },
+  "Donate": {
+    "title": "In Erinnerung an {name}",
+    "text": "Wenn du in Erinnerung an {name} etwas geben möchtest, kannst du die Arbeit der Stiftung mit den erwachsenen Kindern aus Padre Wassons Familie unterstützen. Bitte schreib als Verwendungszweck „In Erinnerung an {name}“.",
+    "link": "Spenden"
+  },
+  "Request": {
+    "metaTitle": "Eine Gedenkseite anfragen",
+    "title": "Eine Gedenkseite anfragen",
+    "greeting": "Liebe Familie, liebe Freunde,",
+    "intro": "wenn jemand aus Padre Wassons Familie gestorben ist und ihr euch hier eine Seite für ihn oder sie wünscht, erzählt uns von ihm oder ihr. Familien und NPH-Mitarbeitende können uns gleichermaßen schreiben. Wir lesen jede Anfrage selbst und melden uns bei euch.",
+    "consentNote": "Wir veröffentlichen eine Seite nur, wenn die Familie und NPH einverstanden sind. Nichts, was ihr hier schickt, ist öffentlich.",
+    "aboutYou": "Über dich",
+    "requesterName": "Dein Name",
+    "requesterEmail": "Deine E-Mail-Adresse",
+    "requesterPhone": "Telefon oder WhatsApp",
+    "requesterRelation": "Wie seid ihr verbunden?",
+    "requesterRelationHint": "Zum Beispiel: Mutter, Bruder, Mitarbeiterin von NPH Honduras, Pate",
+    "aboutThem": "Über die Person",
+    "personName": "Vollständiger Name",
+    "birthDate": "Geboren",
+    "deathDate": "Gestorben",
+    "dateHint": "Ein Datum oder ein Jahr, so genau du es weißt",
+    "country": "Land",
+    "chooseCountry": "Land wählen",
+    "otherCountry": "Ein anderes Land",
+    "home": "NPH-Heim",
+    "story": "Erzähl uns von ihm oder ihr",
+    "storyHint": "Was war ihm oder ihr wichtig, woran erinnerst du dich? Wir schreiben die Seite gemeinsam mit dir.",
+    "photo": "Ein Foto",
+    "isMinor": "Er oder sie war jünger als 18, als er oder sie starb.",
+    "familyInformed": "Die Familie weiß von dieser Anfrage und ist einverstanden.",
+    "submit": "Anfrage senden",
+    "sending": "Wird gesendet …",
+    "thanks": "Danke. Wir haben eure Anfrage und schreiben euch bald.",
+    "privacyLink": "Wie wir mit euren Daten umgehen"
+  },
+  "Forms": {
+    "optional": "freiwillig",
+    "required": "Pflichtfeld",
+    "errorSummary": "Bitte prüf noch Folgendes:",
+    "errors": {
+      "required": "Bitte füll das aus.",
+      "tooLong": "Das ist zu lang.",
+      "email": "Bitte gib eine gültige E-Mail-Adresse ein.",
+      "photoType": "Bitte wähl ein Foto im Format JPEG, PNG oder WebP.",
+      "photoSize": "Das Foto ist zu groß. Bitte wähl eines unter 8 MB.",
+      "photoBroken": "Wir konnten das Foto nicht lesen. Bitte versuch ein anderes.",
+      "tooFast": "Das ging sehr schnell. Bitte warte einen Moment und sende noch einmal.",
+      "expired": "Das Formular war sehr lange offen. Bitte lad die Seite neu und sende noch einmal.",
+      "rateLimited": "Du hast in kurzer Zeit sehr viel gesendet. Bitte versuch es in einer Stunde noch einmal.",
+      "spam": "Etwas ist schiefgegangen. Bitte lad die Seite neu und versuch es noch einmal.",
+      "notFound": "Auf dieser Seite kann man nichts hinterlassen.",
+      "server": "Bei uns ist etwas schiefgegangen. Bitte versuch es später noch einmal oder schreib an info@padrewassonfoundation.org."
+    }
+  },
+  "Pages": {
+    "draftNote": "Entwurf. Die Stiftung ersetzt diesen Text.",
+    "about": {
+      "metaTitle": "Über diese Gedenkseiten",
+      "title": "Über diese Gedenkseiten",
+      "body": [
+        "Padre Wasson hat immer gesagt, dass seine Kinder keine Waisen sind, weil sie eine Familie haben. Diese Familie hält auch nach den Jahren in den Heimen zusammen, und sie hält zusammen, wenn einer von uns stirbt.",
+        "Auf diesen Seiten erinnern wir an Kinder und junge Menschen von Nuestros Pequeños Hermanos, die gestorben sind. Jede Seite gehört einem Menschen. Familie, Geschwister aus den Heimen, Paten und Volontäre können ein paar Worte hinterlassen oder eine Kerze anzünden.",
+        "Eine Seite entsteht nur, wenn die Familie und NPH einverstanden sind. Alles, was uns geschickt wird, liest jemand aus der Stiftung, bevor es erscheint. Seiten für Kinder, die vor ihrem 18. Geburtstag gestorben sind, werden vor der Veröffentlichung noch einmal geprüft.",
+        "Wir verwenden keine Cookies zum Nachverfolgen und keine Analysedienste. Wenn ihr Fragen habt oder etwas geändert oder entfernt haben möchtet, schreibt uns an info@padrewassonfoundation.org."
+      ]
+    },
+    "privacy": {
+      "metaTitle": "Datenschutz",
+      "title": "Datenschutz",
+      "body": [
+        "Dieser Text ist ein Platzhalter. Die Datenschutzerklärung der Stiftung für diese Seiten muss noch geschrieben und geprüft werden.",
+        "Was die Gedenkseiten heute tun: Sie speichern die Erinnerungen, Kerzen und Anfragen, die Menschen schicken, zusammen mit dem Zeitpunkt. IP-Adressen werden nicht gespeichert. Um Missbrauch zu verhindern, wird höchstens einen Tag lang ein nicht umkehrbarer Hash der Adresse aufbewahrt. Besucher bekommen keine Cookies; Mitarbeitende, die sich anmelden, bekommen ein Sitzungs-Cookie. Es gibt keine Analyse und kein Tracking.",
+        "Fotos werden vor dem Speichern neu abgespeichert. Dabei werden Orts- und Kameradaten entfernt."
+      ]
+    },
+    "impressum": {
+      "metaTitle": "Impressum",
+      "title": "Impressum",
+      "body": [
+        "Dieser Text ist ein Platzhalter. Das Impressum der Padre Wasson Foundation gilt auch für diese Seiten."
+      ],
+      "link": "Impressum der Padre Wasson Foundation"
+    }
+  },
+  "NotFound": {
+    "title": "Diese Seite haben wir nicht gefunden.",
+    "text": "Vielleicht ist der Link alt, oder die Seite ist noch nicht veröffentlicht.",
+    "link": "Zurück zu allen, an die wir erinnern"
+  },
+  "Admin": {
+    "title": "Verwaltung der Gedenkseiten",
+    "signIn": "Anmelden",
+    "signOut": "Abmelden",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "newPassword": "Neues Passwort",
+    "setPassword": "Passwort speichern",
+    "passwordSaved": "Dein Passwort ist gespeichert.",
+    "forgotPassword": "Passwort vergessen?",
+    "sendResetLink": "Link senden",
+    "resetLinkSent": "Wenn diese Adresse zu einem Zugang gehört, haben wir einen Link geschickt.",
+    "signInFailed": "E-Mail oder Passwort stimmen nicht.",
+    "notStaff": "Dieser Zugang steht nicht auf der Liste. Bitte eine Administratorin oder einen Administrator, dich hinzuzufügen.",
+    "nav": {
+      "overview": "Übersicht",
+      "memorials": "Gedenkseiten",
+      "tributes": "Erinnerungen",
+      "candles": "Kerzen",
+      "requests": "Anfragen",
+      "staff": "Team",
+      "account": "Konto"
+    },
+    "dashboard": {
+      "waiting": "Wartet auf dich",
+      "pendingTributes": "{count, plural, =0 {Keine Erinnerungen zu lesen} one {# Erinnerung zu lesen} other {# Erinnerungen zu lesen}}",
+      "pendingCandles": "{count, plural, =0 {Keine Kerzen-Worte zu lesen} one {# Kerzen-Wort zu lesen} other {# Kerzen-Worte zu lesen}}",
+      "newRequests": "{count, plural, =0 {Keine neuen Anfragen} one {# neue Anfrage} other {# neue Anfragen}}",
+      "unpublished": "{count, plural, =0 {Keine Seiten in Arbeit} one {# Seite noch nicht veröffentlicht} other {# Seiten noch nicht veröffentlicht}}"
+    },
+    "role": {
+      "admin": "Admin",
+      "editor": "Redaktion"
+    },
+    "status": {
+      "draft": "Entwurf",
+      "pending": "Wartet auf Zustimmung",
+      "published": "Veröffentlicht",
+      "approved": "Freigegeben",
+      "rejected": "Abgelehnt",
+      "new": "Neu",
+      "in_progress": "In Arbeit",
+      "accepted": "Angenommen",
+      "declined": "Abgelehnt",
+      "hidden": "Ausgeblendet"
+    },
+    "actions": {
+      "approve": "Freigeben",
+      "reject": "Ablehnen",
+      "hide": "Ausblenden",
+      "show": "Wieder zeigen",
+      "delete": "Löschen",
+      "save": "Speichern",
+      "edit": "Bearbeiten",
+      "preview": "Vorschau",
+      "view": "Seite ansehen",
+      "create": "Anlegen",
+      "add": "Hinzufügen",
+      "upload": "Hochladen",
+      "remove": "Entfernen",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "confirmDelete": "Endgültig löschen? Das lässt sich nicht rückgängig machen."
+    },
+    "memorials": {
+      "new": "Neue Gedenkseite",
+      "empty": "Noch keine Gedenkseiten.",
+      "name": "Name",
+      "slug": "Adresse",
+      "slugHint": "Kleinbuchstaben, Zahlen und Bindestriche. Wird zu /remembered/…",
+      "birthDate": "Geboren",
+      "deathDate": "Gestorben",
+      "precision": "Genau bekannt",
+      "precisionDay": "Tag",
+      "precisionMonth": "Monat",
+      "precisionYear": "Nur das Jahr",
+      "country": "Land",
+      "home": "NPH-Heim",
+      "story": "Geschichte",
+      "storyHint": "Einfacher Text. Zwischen Absätzen eine leere Zeile lassen.",
+      "storyLang": "Sprache der Geschichte",
+      "portrait": "Porträt",
+      "status": "Status",
+      "consent": "Zustimmung",
+      "consentConfirmed": "Die Familie und NPH sind mit dieser Seite einverstanden.",
+      "consentNote": "Wer hat zugestimmt, wann und wie (intern)",
+      "minor": "Vor dem 18. Geburtstag gestorben",
+      "minorConfirmed": "Bestätigung durch Admin bei Minderjährigen",
+      "minorConfirmedBy": "Bestätigt am {date}",
+      "minorConfirm": "Ich bestätige als Admin, dass diese Seite veröffentlicht werden darf.",
+      "minorAdminOnly": "Nur ein Admin kann das bestätigen.",
+      "publishBlockedConsent": "Kann noch nicht veröffentlicht werden: Die Zustimmung ist nicht bestätigt.",
+      "publishBlockedMinor": "Kann noch nicht veröffentlicht werden: Ein Admin muss die Seite eines minderjährigen Kindes bestätigen.",
+      "sample": "Beispielseite",
+      "candles": "Kerzen",
+      "albums": "Alben",
+      "newAlbum": "Neues Album",
+      "albumTitle": "Titel des Albums",
+      "albumDescription": "Beschreibung",
+      "photos": "Fotos",
+      "noAlbum": "In keinem Album",
+      "caption": "Bildunterschrift",
+      "contributedBy": "Geteilt von",
+      "addPhoto": "Foto hinzufügen",
+      "saved": "Gespeichert.",
+      "slugTaken": "Diese Adresse hat schon eine andere Seite."
+    },
+    "tributes": {
+      "pending": "Warten darauf, gelesen zu werden",
+      "recent": "Zuletzt freigegeben",
+      "empty": "Nichts wartet. Danke.",
+      "for": "Für {name}",
+      "relation": "Verbindung",
+      "photo": "Foto"
+    },
+    "candles": {
+      "pending": "Kerzen-Worte, die gelesen werden wollen",
+      "empty": "Nichts wartet.",
+      "for": "Für {name}"
+    },
+    "requests": {
+      "empty": "Keine Anfragen.",
+      "from": "Von",
+      "about": "Für",
+      "contact": "Kontakt",
+      "relation": "Verbindung",
+      "isMinor": "Jünger als 18",
+      "familyInformed": "Familie weiß Bescheid",
+      "yes": "Ja",
+      "no": "Nein",
+      "staffNote": "Interne Notiz",
+      "createMemorial": "Aus dieser Anfrage eine Gedenkseite anlegen",
+      "openMemorial": "Gedenkseite öffnen",
+      "received": "Eingegangen am {date}"
+    },
+    "staff": {
+      "intro": "Admins dürfen alles. Die Redaktion kann Erinnerungen lesen und freigeben, Gedenkseiten bearbeiten und veröffentlichen, aber keine Seiten von Minderjährigen bestätigen und kein Team verwalten.",
+      "invite": "Jemanden einladen",
+      "invited": "Einladung verschickt.",
+      "you": "du",
+      "lastAdmin": "Es muss immer mindestens einen Admin geben."
+    },
+    "errors": {
+      "generic": "Das hat nicht geklappt. Bitte versuch es noch einmal.",
+      "forbidden": "Das darfst du nicht."
+    }
+  }
+}
