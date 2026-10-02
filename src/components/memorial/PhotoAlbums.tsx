@@ -66,7 +66,7 @@ export function PhotoAlbums({ albums }: { albums: PublicAlbum[] }) {
           if (e.key === 'ArrowRight') go(1);
           if (e.key === 'ArrowLeft') go(-1);
         }}
-        aria-label={photo?.caption ?? undefined}
+        aria-label={photo?.caption || t('photos')}
         className="m-auto max-h-[95vh] w-[min(64rem,95vw)] bg-paper p-4 text-ink backdrop:bg-black/80"
       >
         {photo && (

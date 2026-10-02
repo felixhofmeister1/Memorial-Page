@@ -32,7 +32,7 @@ export function MainMenu({ sections, labels }: Props) {
   }, []);
 
   return (
-    <nav ref={navRef} aria-label="Main">
+    <nav ref={navRef} aria-label={labels.menu}>
       <button
         type="button"
         className="button-quiet md:hidden"
