@@ -275,7 +275,11 @@
       "contributedBy": "Geteilt von",
       "addPhoto": "Foto hinzufügen",
       "saved": "Gespeichert.",
-      "slugTaken": "Diese Adresse hat schon eine andere Seite."
+      "slugTaken": "Diese Adresse hat schon eine andere Seite.",
+      "knownAs": "Rufname",
+      "knownAsHint": "Wie Familie und Freunde ihn oder sie genannt haben. Wird in Sätzen wie „Schreib etwas für Lupita“ verwendet.",
+      "slugInvalid": "Die Adresse darf nur Kleinbuchstaben, Zahlen und Bindestriche enthalten.",
+      "datesOrder": "Das Sterbedatum liegt vor dem Geburtsdatum."
     },
     "tributes": {
       "pending": "Warten darauf, gelesen zu werden",
@@ -310,7 +314,10 @@
       "invite": "Jemanden einladen",
       "invited": "Einladung verschickt.",
       "you": "du",
-      "lastAdmin": "Es muss immer mindestens einen Admin geben."
+      "lastAdmin": "Es muss immer mindestens einen Admin geben.",
+      "role": "Rolle",
+      "makeAdmin": "Zum Admin machen",
+      "makeEditor": "Zur Redaktion machen"
     },
     "errors": {
       "generic": "Das hat nicht geklappt. Bitte versuch es noch einmal.",

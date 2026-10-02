@@ -275,7 +275,11 @@
       "contributedBy": "Compartida por",
       "addPhoto": "Añadir una foto",
       "saved": "Guardado.",
-      "slugTaken": "Otra página ya usa esta dirección."
+      "slugTaken": "Otra página ya usa esta dirección.",
+      "knownAs": "Le decían",
+      "knownAsHint": "Cómo le llamaban la familia y los amigos. Se usa en frases como «Escribe algo para Lupita».",
+      "slugInvalid": "La dirección solo puede tener minúsculas, números y guiones.",
+      "datesOrder": "La fecha de fallecimiento es anterior a la de nacimiento."
     },
     "tributes": {
       "pending": "Esperando ser leídos",
@@ -310,7 +314,10 @@
       "invite": "Invitar a alguien",
       "invited": "Invitación enviada.",
       "you": "tú",
-      "lastAdmin": "Siempre tiene que haber al menos un administrador."
+      "lastAdmin": "Siempre tiene que haber al menos un administrador.",
+      "role": "Rol",
+      "makeAdmin": "Hacer administrador",
+      "makeEditor": "Pasar a redacción"
     },
     "errors": {
       "generic": "No funcionó. Por favor, inténtalo de nuevo.",

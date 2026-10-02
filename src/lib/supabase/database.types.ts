@@ -9,11 +9,21 @@ export type StaffRole = 'admin' | 'editor';
 export type RequestStatus = 'new' | 'in_progress' | 'accepted' | 'declined';
 export type DatePrecision = 'day' | 'month' | 'year';
 
-type Table<Row, Insert = Partial<Row>, Update = Partial<Row>> = {
+type PersonRelation<Name extends string> = [
+  {
+    foreignKeyName: Name;
+    columns: ['person_id'];
+    isOneToOne: false;
+    referencedRelation: 'people';
+    referencedColumns: ['id'];
+  },
+];
+
+type Table<Row, Insert = Partial<Row>, Relationships extends unknown[] = []> = {
   Row: Row;
   Insert: Insert;
-  Update: Update;
-  Relationships: [];
+  Update: Partial<Row>;
+  Relationships: Relationships;
 };
 
 export type PersonRow = {
@@ -127,10 +137,14 @@ export type Database = {
   public: {
     Tables: {
       people: Table<PersonRow, Partial<PersonRow> & Pick<PersonRow, 'slug' | 'name'>>;
-      albums: Table<AlbumRow, Partial<AlbumRow> & Pick<AlbumRow, 'person_id' | 'title'>>;
-      photos: Table<PhotoRow, Partial<PhotoRow> & Pick<PhotoRow, 'person_id' | 'storage_path'>>;
-      tributes: Table<TributeRow, Partial<TributeRow> & Pick<TributeRow, 'person_id' | 'author_name' | 'message'>>;
-      candles: Table<CandleRow, Partial<CandleRow> & Pick<CandleRow, 'person_id'>>;
+      albums: Table<AlbumRow, Partial<AlbumRow> & Pick<AlbumRow, 'person_id' | 'title'>, PersonRelation<'albums_person_id_fkey'>>;
+      photos: Table<PhotoRow, Partial<PhotoRow> & Pick<PhotoRow, 'person_id' | 'storage_path'>, PersonRelation<'photos_person_id_fkey'>>;
+      tributes: Table<
+        TributeRow,
+        Partial<TributeRow> & Pick<TributeRow, 'person_id' | 'author_name' | 'message'>,
+        PersonRelation<'tributes_person_id_fkey'>
+      >;
+      candles: Table<CandleRow, Partial<CandleRow> & Pick<CandleRow, 'person_id'>, PersonRelation<'candles_person_id_fkey'>>;
       memorial_requests: Table<
         MemorialRequestRow,
         Partial<MemorialRequestRow> &
