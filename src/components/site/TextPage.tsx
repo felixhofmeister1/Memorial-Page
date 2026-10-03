@@ -6,11 +6,11 @@ export async function TextPage({ page, children }: { page: 'about' | 'privacy' |
   const t = await getTranslations('Pages');
   const body = t.raw(`${page}.body`) as string[];
   return (
-    <div className="mx-auto max-w-site px-gutter py-10">
-      <div className="max-w-text">
-        <p className="mb-6 border-l-4 border-line pl-3 text-small text-muted">{t('draftNote')}</p>
+    <div className="mx-auto max-w-site px-gutter pt-12 md:pt-20">
+      <div className="mx-auto max-w-text">
+        <p className="ui mb-8 inline-block bg-paper-deep px-3 py-1.5 text-small text-muted">{t('draftNote')}</p>
         <h1>{t(`${page}.title`)}</h1>
-        <div className="prose-story mt-6">
+        <div className="prose-story mt-10">
           {body.map((paragraph, i) => (
             <p key={i}>{paragraph}</p>
           ))}

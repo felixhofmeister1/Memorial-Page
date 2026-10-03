@@ -80,8 +80,14 @@ export function FieldError({ id, code }: { id: string; code?: ErrorCode }) {
 export function CheckboxField({ name, label, state }: { name: string; label: string; state: FormState }) {
   const id = useId();
   return (
-    <div className="flex items-start gap-2">
-      <input id={id} type="checkbox" name={name} defaultChecked={state.values?.[name] === 'on'} className="mt-1.5" />
+    <div className="ui flex items-start gap-3">
+      <input
+        id={id}
+        type="checkbox"
+        name={name}
+        defaultChecked={state.values?.[name] === 'on'}
+        className="mt-[0.2rem] h-[1.125rem] w-[1.125rem] shrink-0 accent-[var(--color-accent)]"
+      />
       <label htmlFor={id}>{label}</label>
     </div>
   );
@@ -93,7 +99,7 @@ export function FormMessage({ state }: { state: FormState }) {
   const hasFieldErrors = state.fieldErrors && Object.keys(state.fieldErrors).length > 0;
   if (state.status !== 'error') return null;
   return (
-    <div role="alert" className="border-l-4 border-[var(--color-error)] py-1 pl-3 text-[var(--color-error)]">
+    <div role="alert" className="ui border-l-[3px] border-error bg-field py-3 pl-4 pr-3 text-[0.9375rem] text-error">
       {state.formError ? t(`errors.${state.formError}`) : hasFieldErrors ? t('errorSummary') : t('errors.server')}
     </div>
   );

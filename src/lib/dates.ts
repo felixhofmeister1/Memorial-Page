@@ -1,5 +1,10 @@
 import type { DatePrecision } from '@/lib/supabase/database.types';
 
+// The foundation is German; its English texts write "14 February 2021", so English uses en-GB.
+function intlLocale(locale: string) {
+  return locale === 'en' ? 'en-GB' : locale;
+}
+
 const OPTIONS: Record<DatePrecision, Intl.DateTimeFormatOptions> = {
   day: { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' },
   month: { month: 'long', year: 'numeric', timeZone: 'UTC' },
@@ -11,7 +16,7 @@ export function formatLifeDate(date: string | null, precision: DatePrecision, lo
   if (!date) return null;
   const parsed = new Date(`${date}T00:00:00Z`);
   if (Number.isNaN(parsed.getTime())) return null;
-  return new Intl.DateTimeFormat(locale, OPTIONS[precision]).format(parsed);
+  return new Intl.DateTimeFormat(intlLocale(locale), OPTIONS[precision]).format(parsed);
 }
 
 export function yearOf(date: string | null): number | null {
@@ -21,11 +26,11 @@ export function yearOf(date: string | null): number | null {
 }
 
 export function formatDateTime(value: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Berlin' }).format(
+  return new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Berlin' }).format(
     new Date(value),
   );
 }
 
 export function formatDate(value: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale, { dateStyle: 'long', timeZone: 'Europe/Berlin' }).format(new Date(value));
+  return new Intl.DateTimeFormat(intlLocale(locale), { dateStyle: 'long', timeZone: 'Europe/Berlin' }).format(new Date(value));
 }

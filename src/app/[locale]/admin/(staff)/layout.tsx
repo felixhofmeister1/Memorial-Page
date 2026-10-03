@@ -20,7 +20,7 @@ export default async function StaffLayout({ children }: LayoutProps<'/[locale]/a
   ] as const;
 
   return (
-    <div className="mx-auto max-w-site px-gutter py-8">
+    <div className="ui mx-auto max-w-site px-gutter py-10">
       <div className="flex flex-wrap items-baseline justify-between gap-4 border-b border-line pb-3">
         <nav aria-label={t('title')}>
           <ul className="flex flex-wrap gap-x-5 gap-y-1">

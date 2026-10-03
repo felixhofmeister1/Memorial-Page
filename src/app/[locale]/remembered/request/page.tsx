@@ -18,12 +18,14 @@ export default async function RequestPage({ params }: PageProps<'/[locale]/remem
   const t = await getTranslations('Request');
 
   return (
-    <div className="mx-auto max-w-site px-gutter py-10">
-      <div className="max-w-text">
+    <div className="mx-auto max-w-site px-gutter pt-12 md:pt-20">
+      <div className="mx-auto max-w-wide-text">
         <h1>{t('title')}</h1>
-        <p className="mt-6">{t('greeting')}</p>
-        <p className="mt-2">{t('intro')}</p>
-        <p className="mt-4">{t('consentNote')}</p>
+        <div className="mt-10 space-y-4 border-l-2 border-line pl-6 md:pl-8">
+          <p className="lede italic">{t('greeting')}</p>
+          <p>{t('intro')}</p>
+          <p>{t('consentNote')}</p>
+        </div>
         <RequestForm token={issueFormToken()} countries={sortedCountries(NPH_COUNTRIES, locale)} />
       </div>
     </div>

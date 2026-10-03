@@ -18,28 +18,30 @@ export function CandleForm({ personId, name, count, token }: Props) {
 
   return (
     <div>
-      <p className="flex items-end gap-3">
-        <CandleIcon lit={shown > 0} />
-        <span aria-live="polite">{t('count', { count: shown, name })}</span>
-      </p>
+      <div className="flex items-end gap-4">
+        <CandleIcon lit={shown > 0} appear={lit} className="shrink-0 text-ink" />
+        <p aria-live="polite" className="pb-1 font-serif text-[1.1875rem] leading-snug">
+          {t('count', { count: shown, name })}
+        </p>
+      </div>
 
       {lit ? (
-        <p role="status" className="mt-3">
+        <p role="status" className="mt-5 font-serif italic">
           {state.withWords ? t('litWithWords') : t('lit')}
         </p>
       ) : (
-        <form action={formAction} className="mt-3 space-y-3">
+        <form action={formAction} className="mt-5 space-y-4">
           <input type="hidden" name="personId" value={personId} />
           <SpamGuards token={token} locale={locale} />
           <FormMessage state={state} />
           <details open={!!(state.values?.author_name || state.values?.message)}>
-            <summary className="cursor-pointer text-small">{t('addWords')}</summary>
+            <summary className="ui cursor-pointer text-small text-muted hover:text-ink">{t('addWords')}</summary>
             <div className="mt-3 space-y-3">
               <TextField name="author_name" label={t('authorName')} state={state} optional maxLength={80} autoComplete="name" />
               <TextField name="message" label={t('message')} hint={t('messageHint')} state={state} optional multiline rows={2} maxLength={280} />
             </div>
           </details>
-          <button type="submit" className="button-quiet" disabled={pending}>
+          <button type="submit" className="button-quiet w-full justify-center" disabled={pending}>
             {pending ? t('sending') : t('light')}
           </button>
         </form>

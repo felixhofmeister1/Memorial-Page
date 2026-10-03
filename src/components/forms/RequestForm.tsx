@@ -19,21 +19,25 @@ export function RequestForm({ token, countries }: Props) {
 
   if (state.status === 'success') {
     return (
-      <p role="status" className="mt-8">
+      <p role="status" className="panel mt-12 p-8 font-serif text-[1.25rem] italic">
         {t('thanks')}
       </p>
     );
   }
 
   return (
-    <form action={formAction} className="mt-8 space-y-8">
+    <form action={formAction} className="mt-14 space-y-12">
       <SpamGuards token={token} locale={locale} />
       <FormMessage state={state} />
 
-      <fieldset className="space-y-4">
-        <legend className="text-h3 font-semibold">{t('aboutYou')}</legend>
+      <div className="border-t border-line pt-8">
+      <fieldset className="space-y-5">
+        <legend className="eyebrow mb-5">{t('aboutYou')}</legend>
+        <div className="grid gap-5 sm:grid-cols-2">
         <TextField name="requester_name" label={t('requesterName')} state={state} maxLength={120} autoComplete="name" />
         <TextField name="requester_email" label={t('requesterEmail')} state={state} type="email" maxLength={254} autoComplete="email" />
+        </div>
+        <div className="grid gap-5 sm:grid-cols-2">
         <TextField name="requester_phone" label={t('requesterPhone')} state={state} type="tel" optional maxLength={40} autoComplete="tel" />
         <TextField
           name="requester_relation"
@@ -42,15 +46,19 @@ export function RequestForm({ token, countries }: Props) {
           state={state}
           maxLength={200}
         />
+        </div>
       </fieldset>
+      </div>
 
-      <fieldset className="space-y-4">
-        <legend className="text-h3 font-semibold">{t('aboutThem')}</legend>
+      <div className="border-t border-line pt-8">
+      <fieldset className="space-y-5">
+        <legend className="eyebrow mb-5">{t('aboutThem')}</legend>
         <TextField name="person_name" label={t('personName')} state={state} maxLength={200} />
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-5 sm:grid-cols-2">
           <TextField name="birth_date" label={t('birthDate')} hint={t('dateHint')} state={state} optional maxLength={60} />
           <TextField name="death_date" label={t('deathDate')} hint={t('dateHint')} state={state} optional maxLength={60} />
         </div>
+        <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor={countryId} className="label">
             {t('country')} <span className="font-normal text-muted">({tt('optional')})</span>
@@ -66,18 +74,24 @@ export function RequestForm({ token, countries }: Props) {
           </select>
         </div>
         <TextField name="home" label={t('home')} state={state} optional maxLength={200} />
+        </div>
         <TextField name="story" label={t('story')} hint={t('storyHint')} state={state} optional multiline rows={8} maxLength={20000} />
         <PhotoField name="photo" label={t('photo')} hint={tt('photoHint')} state={state} />
-        <CheckboxField name="is_minor" label={t('isMinor')} state={state} />
-        <CheckboxField name="family_informed" label={t('familyInformed')} state={state} />
+        <div className="space-y-3 pt-2">
+          <CheckboxField name="is_minor" label={t('isMinor')} state={state} />
+          <CheckboxField name="family_informed" label={t('familyInformed')} state={state} />
+        </div>
       </fieldset>
+      </div>
 
-      <p className="text-small">
-        <Link href="/privacy">{t('privacyLink')}</Link>
-      </p>
-      <button type="submit" className="button" disabled={pending}>
-        {pending ? t('sending') : t('submit')}
-      </button>
+      <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-line pt-8">
+        <button type="submit" className="button" disabled={pending}>
+          {pending ? t('sending') : t('submit')}
+        </button>
+        <Link href="/privacy" className="ui text-[0.9375rem]">
+          {t('privacyLink')}
+        </Link>
+      </div>
     </form>
   );
 }

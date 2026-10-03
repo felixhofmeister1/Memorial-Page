@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { shortName, type PublicAlbum, type PublicCandle, type PublicPerson, type PublicTribute } from '@/lib/data/public';
 import { CandleForm } from './CandleForm';
+import { CandleIcon } from './CandleIcon';
 import { DonateInMemory } from './DonateInMemory';
 import { LifeDates } from './LifeDates';
 import { PhotoAlbums } from './PhotoAlbums';
@@ -20,7 +21,11 @@ type Props = {
   formToken?: string;
 };
 
-/** One memorial page. Used for the public page and for the admin preview. */
+/**
+ * One memorial page, laid out like a page in a memorial book: portrait beside the name,
+ * the story in a reading column, the candle and the gift at its side.
+ * Used for the public page and for the admin preview.
+ */
 export async function MemorialView({ person, albums, tributes, candles, formToken }: Props) {
   const t = await getTranslations('Memorial');
   const tp = await getTranslations('Person');
@@ -29,86 +34,115 @@ export async function MemorialView({ person, albums, tributes, candles, formToke
   const name = shortName(person);
 
   return (
-    <article className="mx-auto max-w-site px-gutter py-10">
-      {person.sample && <p className="mb-6 border-l-4 border-line pl-3 text-small text-muted">{tp('sample')}</p>}
+    <article>
+      {person.sample && (
+        <p className="ui border-b border-line bg-paper-deep px-gutter py-2.5 text-center text-small text-muted">{tp('sample')}</p>
+      )}
 
-      <header className="grid gap-6 md:grid-cols-[minmax(0,18rem)_1fr] md:gap-10">
-        <Portrait path={person.portrait_url} name={person.name} className="w-full max-w-72" />
-        <div className="self-end">
-          <h1>{person.name}</h1>
-          <LifeDates
-            birth={person.birth_date}
-            birthPrecision={person.birth_date_precision}
-            death={person.death_date}
-            deathPrecision={person.death_date_precision}
-            className="mt-2 text-h3"
-          />
-          <Place country={person.country} home={person.home} className="mt-1 text-muted" />
+      {/* Name, dates, place ------------------------------------------------------ */}
+      <header className="mx-auto max-w-site px-gutter pt-8 md:pt-12">
+        <p className="ui text-small">
+          <Link href="/remembered" className="text-muted no-underline hover:text-ink hover:underline">
+            <span aria-hidden="true">← </span>
+            {t('backToOverview')}
+          </Link>
+        </p>
+        <div className="mt-8 grid gap-8 md:mt-12 md:grid-cols-[minmax(0,20rem)_1fr] md:items-end md:gap-14 lg:grid-cols-[minmax(0,22rem)_1fr]">
+          <Portrait path={person.portrait_url} name={person.name} className="print w-full max-w-[15rem] md:max-w-[22rem]" />
+          <div className="md:pb-3">
+            <p className="eyebrow">{tp('inMemory')}</p>
+            <h1 className="mt-4">{person.name}</h1>
+            <LifeDates
+              birth={person.birth_date}
+              birthPrecision={person.birth_date_precision}
+              death={person.death_date}
+              deathPrecision={person.death_date_precision}
+              className="mt-5 text-[1.375rem] italic"
+            />
+            <Place country={person.country} home={person.home} className="ui mt-2 text-muted" />
+            {formToken && (
+              <p className="ui mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-[0.9375rem]">
+                <a href="#candle" className="inline-flex items-center gap-2 no-underline hover:underline">
+                  <CandleIcon lit={person.candle_count > 0} size="small" className="text-ink" />
+                  {tc('light')}
+                </a>
+                <a href="#write" className="no-underline hover:underline">
+                  {t('writeSomething')}
+                </a>
+              </p>
+            )}
+          </div>
         </div>
       </header>
 
-      <div className="mt-10 grid gap-12 md:grid-cols-[1fr_minmax(0,18rem)] md:gap-16">
-        <div className="min-w-0 max-w-text">
-          <Story text={person.story} lang={person.story_lang} />
-
-          {albums.length > 0 && (
-            <section aria-labelledby="photos-heading" className="mt-14">
-              <h2 id="photos-heading">{t('photos')}</h2>
-              <div className="mt-4">
-                <PhotoAlbums albums={albums} />
-              </div>
-            </section>
-          )}
-
-          <section aria-labelledby="tributes-heading" className="mt-14">
-            <h2 id="tributes-heading">{t('tributes')}</h2>
-            <div className="mt-4">
-              <TributeList tributes={tributes} emptyText={t('noTributes')} />
-            </div>
-            {formToken && (
-              <div className="mt-10 border-t border-line pt-8">
-                <h3 id="write">{tt('title', { name })}</h3>
-                <p className="mt-2 text-muted">{tt('intro')}</p>
-                <div className="mt-6">
-                  <TributeForm personId={person.id} name={name} token={formToken} />
-                </div>
-              </div>
-            )}
-          </section>
+      <div className="mx-auto mt-14 grid max-w-site gap-x-16 gap-y-16 px-gutter md:mt-20 md:grid-cols-[minmax(0,1fr)_19rem]">
+        {/* Story ------------------------------------------------------------------ */}
+        <div className="min-w-0">
+          <Story text={person.story} lang={person.story_lang} className="max-w-text" />
         </div>
 
-        <aside className="space-y-12">
-          <section aria-labelledby="candle-heading">
-            <h2 id="candle-heading" className="text-h3">
+        {/* Candle (beside the story on wide screens, right after it on phones) ----- */}
+        <aside id="candle" aria-labelledby="candle-heading" className="scroll-mt-6 md:col-start-2 md:row-start-1">
+          <div className="panel p-6 md:sticky md:top-6">
+            <h2 id="candle-heading" className="eyebrow">
               {tc('title')}
             </h2>
-            <div className="mt-3">
+            <div className="mt-5">
               {formToken ? (
                 <CandleForm personId={person.id} name={name} count={person.candle_count} token={formToken} />
               ) : (
-                <p>{tc('count', { count: person.candle_count, name })}</p>
+                <div className="flex items-end gap-4">
+                  <CandleIcon lit={person.candle_count > 0} className="text-ink" />
+                  <p className="pb-1 font-serif text-[1.1875rem]">{tc('count', { count: person.candle_count, name })}</p>
+                </div>
               )}
             </div>
             {candles.length > 0 && (
-              <div className="mt-6">
-                <h3 className="text-small font-semibold">{tc('recent')}</h3>
-                <ul className="mt-2 space-y-2 text-small">
+              <div className="mt-6 border-t border-line pt-5">
+                <h3 className="ui text-small font-semibold text-muted">{tc('recent')}</h3>
+                <ul className="mt-3 space-y-3">
                   {candles.map((candle) => (
-                    <li key={candle.id}>
-                      <span className="font-semibold">{candle.author_name ?? tc('anonymous')}</span>
-                      {candle.message && <span>: {candle.message}</span>}
+                    <li key={candle.id} className="text-[0.9375rem] leading-snug">
+                      {candle.message && <span className="block italic">{candle.message}</span>}
+                      <span className="ui block text-small text-muted">— {candle.author_name ?? tc('anonymous')}</span>
                     </li>
                   ))}
                 </ul>
               </div>
             )}
+          </div>
+        </aside>
+
+        {/* Photos ------------------------------------------------------------------ */}
+        {albums.length > 0 && (
+          <section aria-labelledby="photos-heading" className="min-w-0 md:col-start-1">
+            <h2 id="photos-heading">{t('photos')}</h2>
+            <div className="mt-8">
+              <PhotoAlbums albums={albums} />
+            </div>
           </section>
+        )}
 
+        {/* Tributes ---------------------------------------------------------------- */}
+        <section aria-labelledby="tributes-heading" className="min-w-0 md:col-start-1">
+          <h2 id="tributes-heading">{t('tributes')}</h2>
+          <div className="mt-8 max-w-wide-text">
+            <TributeList tributes={tributes} emptyText={t('noTributes')} />
+          </div>
+          {formToken && (
+            <div id="write" className="panel mt-12 max-w-wide-text scroll-mt-6 p-6 md:p-9">
+              <h3 className="font-serif text-h2 font-normal">{tt('title', { name })}</h3>
+              <p className="mt-3 max-w-text text-ink/85">{tt('intro')}</p>
+              <div className="mt-8">
+                <TributeForm personId={person.id} name={name} token={formToken} />
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* Give in their memory ----------------------------------------------------- */}
+        <aside className="md:col-start-2 md:row-start-2 md:self-start">
           <DonateInMemory name={name} />
-
-          <p className="text-small">
-            <Link href="/remembered">{t('backToOverview')}</Link>
-          </p>
         </aside>
       </div>
     </article>

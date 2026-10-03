@@ -16,7 +16,7 @@ export default async function LoginPage({ params, searchParams }: PageProps<'/[l
   if (staff) redirect({ href: '/admin', locale });
 
   return (
-    <div className="mx-auto max-w-site px-gutter py-10">
+    <div className="ui mx-auto max-w-site px-gutter py-16">
       <div className="max-w-sm">
         <h1>{t('title')}</h1>
         {(query.not === 'staff' || (user && !staff)) && (

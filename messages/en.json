@@ -10,7 +10,9 @@
     "privacy": "Privacy",
     "legalNotice": "Legal notice",
     "mainSite": "padrewassonfoundation.org",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "legal": "Legal",
+    "noTracking": "No tracking, no analytics, no cookies for visitors."
   },
   "Overview": {
     "metaTitle": "Remembered",
@@ -32,14 +34,16 @@
     "nobodyYet": "There are no pages here yet.",
     "requestTitle": "Would you like a page for someone?",
     "requestText": "If someone from Padre Wasson's family has died and you would like to remember them here, write to us.",
-    "requestLink": "Request a memorial page"
+    "requestLink": "Request a memorial page",
+    "peopleHeading": "Everyone we remember"
   },
   "Person": {
     "born": "Born",
     "died": "Died",
     "nphCountry": "NPH {country}",
     "noPortrait": "No photo yet",
-    "sample": "This is a sample page. The person and the story are invented."
+    "sample": "This is a sample page. The person and the story are invented.",
+    "inMemory": "In memory"
   },
   "Memorial": {
     "photos": "Photos",
@@ -51,7 +55,8 @@
     "next": "Next photo",
     "tributes": "Words from family and friends",
     "noTributes": "No one has written yet. You can be the first.",
-    "backToOverview": "All remembered"
+    "backToOverview": "All remembered",
+    "writeSomething": "Write something"
   },
   "Tribute": {
     "title": "Write something for {name}",

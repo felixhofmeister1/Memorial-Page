@@ -14,15 +14,44 @@ The logo files could not be downloaded and no CSS could be read.
 What that means for the code today:
 
 - All colours, fonts, sizes and spacing live as tokens in [`src/app/globals.css`](src/app/globals.css)
-  (`@theme { … }`). They are **neutral stand-ins**: browser default sans-serif, black on
-  white, grey rules, no accent colour. They are not a design and must be replaced.
-- The header shows the foundation's name as text where the logo belongs.
-- The footer is a minimal stand-in, not the site's real footer.
-- Layout (photo beside text, reading width, section spacing) is a plain first guess and
-  must be checked against the real pages.
+  (`@theme { … }`).
+- On the branch `claude/memorial-app-copy` they hold an **interim design** (below), made on
+  request so the pages can be shown before the extraction. It is a considered design, but it
+  is *ours*, not the foundation's. On `claude/memorial-app` they are neutral stand-ins.
+- The header shows a typographic wordmark where the logo belongs.
+- The footer is an interim layout, not the site's real footer.
 
 To finish: allow `padrewassonfoundation.org` in the environment's network settings
-(or run the steps below on any machine with internet), then work through the checklist.
+(or run the steps below on any machine with internet), then work through the checklist and
+replace the interim values. Components use only the tokens, so this is one file.
+
+## Interim design (branch `claude/memorial-app-copy`)
+
+Built to the rules at the end of this file: quiet, warm, photo-led, nothing for show.
+
+| Token | Value | Use |
+| ----- | ----- | --- |
+| `--color-paper` | `#faf7f2` | page, like uncoated paper |
+| `--color-paper-deep` | `#f2ece3` | candle panel, writing panel, footer |
+| `--color-field` | `#fffdfa` | form fields |
+| `--color-ink` | `#2a2420` | text (14.3:1 on paper) |
+| `--color-muted` | `#675d54` | dates, captions (6.0:1) |
+| `--color-line` | `#e2d9cc` | hairlines |
+| `--color-field-border` | `#8f8478` | field outlines (3.4:1, enough for controls) |
+| `--color-accent` / `--color-link` | `#8c3b22` | clay: links, primary buttons (7.1:1) |
+| `--color-flame` | `#c7862e` | only the candle flame (decorative) |
+| Serif | Newsreader (variable, optical sizes, italic) | names, stories, tributes, headings |
+| Sans | Source Sans 3 | menu, labels, buttons, forms, admin |
+
+Fonts are self-hosted at build time by `next/font`; visitors' browsers never contact Google.
+
+Layout decisions: memorial page like a page in a memorial book (portrait beside the name,
+story in a ~68-character column with a larger first paragraph, candle panel beside the story
+on wide screens and right after it on phones, photos at their own proportions with italic
+captions, tributes set as signed letters); overview as a two-column register with portraits
+beside names; request page set as a letter. English dates use British order ("14 February
+2021") to match the foundation's English texts. Checked with axe (WCAG 2.2 A/AA): no
+violations at 390 px and 1280 px.
 
 ## What is known (from the search index)
 

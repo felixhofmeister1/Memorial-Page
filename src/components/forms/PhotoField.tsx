@@ -67,6 +67,7 @@ export function PhotoField({ name, label, hint, state }: { name: string; label: 
         type="file"
         accept="image/jpeg,image/png,image/webp"
         onChange={onChange}
+        className="ui block w-full text-[0.9375rem] text-muted file:mr-4 file:cursor-pointer file:rounded-[2px] file:border file:border-solid file:border-ink file:bg-transparent file:px-4 file:py-2 file:font-sans file:text-[0.9375rem] file:font-semibold file:text-ink hover:file:bg-paper-deep"
         aria-busy={busy}
         aria-invalid={error ? true : undefined}
         aria-describedby={[hint ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(' ') || undefined}

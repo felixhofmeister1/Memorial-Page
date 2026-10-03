@@ -3,50 +3,64 @@
 /*
  * Design tokens.
  *
- * Every visual value used by the app comes from here, and every value here must come
- * from DESIGN.md, which records what padrewassonfoundation.org actually uses.
+ * STATUS: INTERIM DESIGN (working copy). padrewassonfoundation.org still cannot be
+ * reached from the build environment, so these values are a considered interim design,
+ * not measurements of the foundation's site: warm paper, deep ink, one clay accent,
+ * a serif for names and stories, a sans for the interface. When the real values are
+ * extracted (DESIGN.md), replace them here; components only use these tokens.
  *
- * STATUS: PLACEHOLDER. The foundation's site could not be reached from the build
- * environment yet, so these are neutral stand-ins (browser default type, black on
- * white, no accent colour). They are not a design. Replace them with the measured
- * values when DESIGN.md is filled in; nothing else in the code should need to change.
+ * All text/background pairs pass WCAG AA (checked: ink 14:1, muted 5.5:1+,
+ * clay 6.5:1+, field borders 3.4:1+).
  */
 @theme {
   /* Colours */
-  --color-paper: #ffffff; /* page background */
-  --color-ink: #000000; /* body text */
-  --color-muted: #555555; /* secondary text (dates, captions) */
-  --color-line: #cccccc; /* rules and borders */
-  --color-link: #000000; /* links */
-  --color-accent: #000000; /* buttons */
-  --color-on-accent: #ffffff; /* text on buttons */
-  --color-placeholder: #d4d4d4; /* grey photo placeholders (requested: plain grey) */
-  --color-error: #a00000;
-  --color-header: #ffffff; /* header background */
-  --color-footer: #f2f2f2; /* footer background */
-  --color-footer-ink: #000000;
+  --color-paper: #faf7f2; /* page */
+  --color-paper-deep: #f2ece3; /* quiet panels, footer */
+  --color-field: #fffdfa; /* form fields */
+  --color-ink: #2a2420; /* text */
+  --color-muted: #675d54; /* dates, captions, secondary text */
+  --color-line: #e2d9cc; /* hairlines */
+  --color-field-border: #8f8478; /* form field outlines (3:1 for controls) */
+  --color-link: #8c3b22; /* links */
+  --color-accent: #8c3b22; /* primary buttons (clay) */
+  --color-accent-strong: #6f2d19; /* hover */
+  --color-on-accent: #fff9f2;
+  --color-flame: #c7862e; /* only the candle flame */
+  --color-placeholder: #d9d4cd; /* plain grey photo placeholders */
+  --color-error: #9b1c1c;
+  --color-header: #faf7f2;
+  --color-footer: #f2ece3;
+  --color-footer-ink: #2a2420;
 
-  /* Type */
-  --font-body: sans-serif;
-  --font-heading: sans-serif;
-  --text-body: 1rem;
+  /* Type: next/font sets --font-newsreader and --font-source-sans on <html> */
+  --font-serif: var(--font-newsreader), 'Iowan Old Style', Georgia, serif;
+  --font-sans: var(--font-source-sans), 'Segoe UI', system-ui, sans-serif;
+  --font-body: var(--font-serif);
+  --font-heading: var(--font-serif);
+
+  --text-body: 1.125rem; /* reading text */
+  --text-ui: 1rem; /* interface text */
   --text-small: 0.875rem;
-  --text-h1: 2rem;
-  --text-h2: 1.5rem;
-  --text-h3: 1.125rem;
-  --leading-body: 1.6;
-  --leading-heading: 1.25;
+  --text-eyebrow: 0.75rem;
+  --text-lede: 1.3125rem;
+  --text-h1: clamp(2.25rem, 1.55rem + 2.6vw, 3.5rem);
+  --text-h2: clamp(1.5rem, 1.3rem + 0.8vw, 1.875rem);
+  --text-h3: 1.25rem;
+  --leading-body: 1.65;
+  --leading-heading: 1.15;
 
   /* Layout */
-  --container-site: 72rem; /* main content width */
-  --container-text: 42rem; /* reading width for stories and tributes */
-  --spacing-gutter: 1rem; /* side padding on phones */
-  --radius-button: 0;
+  --container-site: 72rem;
+  --container-text: 38rem; /* about 68 characters */
+  --container-wide-text: 46rem;
+  --spacing-gutter: 1.25rem;
+  --radius-button: 2px;
 }
 
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
   }
   body {
     background: var(--color-paper);
@@ -54,99 +68,239 @@
     font-family: var(--font-body);
     font-size: var(--text-body);
     line-height: var(--leading-body);
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    -webkit-font-smoothing: antialiased;
   }
   h1,
   h2,
   h3 {
     font-family: var(--font-heading);
     line-height: var(--leading-heading);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
   }
   h1 {
     font-size: var(--text-h1);
+    font-variation-settings: 'opsz' 72;
   }
   h2 {
     font-size: var(--text-h2);
+    font-variation-settings: 'opsz' 48;
   }
   h3 {
     font-size: var(--text-h3);
+    font-weight: 500;
+  }
+  p {
+    text-wrap: pretty;
   }
   a {
     color: var(--color-link);
     text-decoration: underline;
-    text-underline-offset: 0.15em;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+  }
+  a:hover {
+    text-decoration-thickness: 2px;
   }
   :focus-visible {
-    outline: 2px solid var(--color-ink);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
   img {
     max-width: 100%;
     height: auto;
   }
+  ::selection {
+    background: #ead9c6;
+  }
+  /* Interface elements use the sans */
+  button,
+  input,
+  select,
+  textarea,
+  label,
+  legend,
+  summary,
+  nav,
+  table {
+    font-family: var(--font-sans);
+  }
 }
 
 @layer components {
+  /* Small capitals label above a heading or block */
+  .eyebrow {
+    font-family: var(--font-sans);
+    font-size: var(--text-eyebrow);
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-muted);
+  }
+  .ui {
+    font-family: var(--font-sans);
+    font-size: var(--text-ui);
+    line-height: 1.5;
+    font-variant-numeric: lining-nums;
+  }
+  .lede {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+  }
+  .rule {
+    height: 1px;
+    background: var(--color-line);
+    border: 0;
+  }
+
   .button {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     border: 1px solid var(--color-accent);
     border-radius: var(--radius-button);
     background: var(--color-accent);
     color: var(--color-on-accent);
-    padding: 0.5rem 1.25rem;
+    padding: 0.7rem 1.4rem;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
     text-decoration: none;
     cursor: pointer;
-    font: inherit;
+    transition: background-color 120ms ease;
+  }
+  .button:hover {
+    background: var(--color-accent-strong);
+    border-color: var(--color-accent-strong);
+    text-decoration: none;
   }
   .button:disabled {
-    opacity: 0.6;
+    opacity: 0.65;
     cursor: default;
   }
   .button-quiet {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
     border: 1px solid var(--color-ink);
     border-radius: var(--radius-button);
     background: transparent;
     color: var(--color-ink);
-    padding: 0.4rem 1rem;
+    padding: 0.6rem 1.15rem;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.2;
     cursor: pointer;
-    font: inherit;
+    text-decoration: none;
+    transition: background-color 120ms ease;
+  }
+  .button-quiet:hover {
+    background: var(--color-paper-deep);
     text-decoration: none;
   }
+  .button-quiet:disabled {
+    opacity: 0.65;
+    cursor: default;
+  }
+
   .field {
     display: block;
     width: 100%;
-    border: 1px solid var(--color-muted);
-    background: var(--color-paper);
+    border: 1px solid var(--color-field-border);
+    border-radius: var(--radius-button);
+    background: var(--color-field);
     color: var(--color-ink);
-    padding: 0.5rem 0.625rem;
-    font: inherit;
+    padding: 0.65rem 0.75rem;
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.4;
+  }
+  select.field {
+    appearance: none;
+    padding-right: 2.25rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%232a2420' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.85rem center;
+    text-overflow: ellipsis;
+  }
+  textarea.field {
+    font-family: var(--font-serif);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+  .field:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 1px;
+    border-color: var(--color-accent);
   }
   .field[aria-invalid='true'] {
     border-color: var(--color-error);
   }
   .label {
     display: block;
+    font-family: var(--font-sans);
+    font-size: 0.9375rem;
     font-weight: 600;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.3rem;
   }
   .hint {
     display: block;
+    font-family: var(--font-sans);
     color: var(--color-muted);
     font-size: var(--text-small);
-    margin-bottom: 0.25rem;
+    line-height: 1.45;
+    margin-bottom: 0.4rem;
   }
   .error-text {
     display: block;
+    font-family: var(--font-sans);
     color: var(--color-error);
     font-size: var(--text-small);
-    margin-top: 0.25rem;
+    margin-top: 0.35rem;
   }
+
   .prose-story p + p {
-    margin-top: 1em;
+    margin-top: 1.1em;
+  }
+  .prose-story > p:first-child {
+    font-size: var(--text-lede);
+    line-height: 1.55;
+  }
+
+  .panel {
+    background: var(--color-paper-deep);
+    border-radius: var(--radius-button);
   }
   .grey-placeholder {
     background: var(--color-placeholder);
   }
+
+  /* Photos: thin inner frame like a mounted print */
+  .print {
+    outline: 1px solid rgb(42 36 32 / 0.08);
+    outline-offset: -1px;
+  }
+}
+
+/* The candle's flame appears gently. The one moment allowed to feel a little special. */
+@keyframes flame-in {
+  from {
+    opacity: 0;
+    transform: translateY(2px) scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.flame-appear {
+  transform-origin: 50% 100%;
+  animation: flame-in 900ms ease-out both;
 }
 
 /* Honeypot: off-screen for people and screen readers, but present for bots. */
@@ -161,5 +315,9 @@
 @media (prefers-reduced-motion: reduce) {
   * {
     scroll-behavior: auto !important;
+    transition: none !important;
+  }
+  .flame-appear {
+    animation: none;
   }
 }

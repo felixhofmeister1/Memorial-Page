@@ -14,12 +14,17 @@ export function LanguageSwitcher() {
   const params = useParams();
 
   return (
-    <nav aria-label={t('language')} className="text-small">
-      <ul className="flex gap-3">
-        {routing.locales.map((l) => (
-          <li key={l}>
+    <nav aria-label={t('language')} className="text-[0.8125rem]">
+      <ul className="flex items-center">
+        {routing.locales.map((l, i) => (
+          <li key={l} className="flex items-center">
+            {i > 0 && (
+              <span aria-hidden="true" className="px-2 text-line">
+                |
+              </span>
+            )}
             {l === locale ? (
-              <span aria-current="true" className="font-semibold">
+              <span aria-current="true" className="font-semibold text-ink">
                 {NAMES[l]}
               </span>
             ) : (
@@ -29,6 +34,7 @@ export function LanguageSwitcher() {
                 locale={l}
                 lang={l}
                 hrefLang={l}
+                className="text-muted no-underline hover:text-ink hover:underline"
               >
                 {NAMES[l]}
               </Link>

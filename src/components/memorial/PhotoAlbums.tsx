@@ -13,9 +13,20 @@ function thumbOf(photo: PublicPhoto) {
 function Picture({ photo, src, alt, className }: { photo: PublicPhoto; src: string | null; alt: string; className?: string }) {
   const ratio = photo.width && photo.height ? `${photo.width} / ${photo.height}` : '4 / 3';
   if (!src) return <div className={`grey-placeholder ${className}`} style={{ aspectRatio: ratio }} />;
-  return <img src={src} alt={alt} width={photo.width ?? undefined} height={photo.height ?? undefined} className={className} style={{ aspectRatio: ratio }} />;
+  return (
+    <img
+      src={src}
+      alt={alt}
+      width={photo.width ?? undefined}
+      height={photo.height ?? undefined}
+      loading="lazy"
+      className={className}
+      style={{ aspectRatio: ratio }}
+    />
+  );
 }
 
+/** Albums laid out like prints at their own proportions; a click opens the photo large. */
 export function PhotoAlbums({ albums }: { albums: PublicAlbum[] }) {
   const t = useTranslations('Memorial');
   const all = albums.flatMap((album) => album.photos);
@@ -35,23 +46,36 @@ export function PhotoAlbums({ albums }: { albums: PublicAlbum[] }) {
   return (
     <>
       {albums.map((album) => (
-        <div key={album.id} className="mt-6 first:mt-0">
-          {album.title && <h3 className="font-semibold">{album.title}</h3>}
-          {album.description && <p className="text-muted">{album.description}</p>}
-          <ul className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div key={album.id} className="mt-12 first:mt-0">
+          {(album.title || album.description) && (
+            <div className="mb-5">
+              {album.title && <h3 className="font-serif text-[1.375rem] font-normal">{album.title}</h3>}
+              {album.description && <p className="mt-1 italic text-muted">{album.description}</p>}
+            </div>
+          )}
+          <ul className="columns-2 gap-4 sm:columns-3 sm:gap-5">
             {album.photos.map((p) => {
               const index = all.indexOf(p);
               return (
-                <li key={p.id}>
-                  <button
-                    type="button"
-                    className="block w-full text-left"
-                    onClick={() => setCurrent(index)}
-                    aria-label={p.caption ? t('openPhoto', { caption: p.caption }) : t('openPhotoUntitled', { number: index + 1 })}
-                  >
-                    <Picture photo={p} src={thumbOf(p)} alt="" className="w-full object-cover" />
-                  </button>
-                  {p.caption && <p className="mt-1 text-small text-muted">{p.caption}</p>}
+                <li key={p.id} className="mb-5 break-inside-avoid">
+                  <figure>
+                    <button
+                      type="button"
+                      className="group block w-full cursor-zoom-in text-left"
+                      onClick={() => setCurrent(index)}
+                      aria-label={p.caption ? t('openPhoto', { caption: p.caption }) : t('openPhotoUntitled', { number: index + 1 })}
+                    >
+                      <Picture
+                        photo={p}
+                        src={thumbOf(p)}
+                        alt=""
+                        className="print w-full object-cover transition-opacity duration-150 group-hover:opacity-90"
+                      />
+                    </button>
+                    {p.caption && (
+                      <figcaption className="mt-2 text-[0.9375rem] italic leading-snug text-muted">{p.caption}</figcaption>
+                    )}
+                  </figure>
                 </li>
               );
             })}
@@ -67,26 +91,36 @@ export function PhotoAlbums({ albums }: { albums: PublicAlbum[] }) {
           if (e.key === 'ArrowLeft') go(-1);
         }}
         aria-label={photo?.caption || t('photos')}
-        className="m-auto max-h-[95vh] w-[min(64rem,95vw)] bg-paper p-4 text-ink backdrop:bg-black/80"
+        className="m-auto max-h-[96vh] w-[min(68rem,96vw)] bg-paper p-4 text-ink backdrop:bg-[#1c1815]/85 md:p-6"
       >
         {photo && (
           <figure>
-            <Picture photo={photo} src={publicImageUrl(photo.storage_path)} alt={photo.caption ?? ''} className="mx-auto max-h-[75vh] w-auto object-contain" />
-            <figcaption className="mt-3">
-              {photo.caption && <span className="block">{photo.caption}</span>}
-              {photo.contributed_by && <span className="block text-small text-muted">{t('photoBy', { name: photo.contributed_by })}</span>}
+            <Picture
+              photo={photo}
+              src={publicImageUrl(photo.storage_path)}
+              alt={photo.caption ?? ''}
+              className="print mx-auto max-h-[74vh] w-auto object-contain"
+            />
+            <figcaption className="mt-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+              <span className="italic">{photo.caption}</span>
+              {photo.contributed_by && (
+                <span className="ui text-small text-muted">{t('photoBy', { name: photo.contributed_by })}</span>
+              )}
             </figcaption>
           </figure>
         )}
-        <div className="mt-3 flex flex-wrap gap-2">
+        <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-line pt-4">
           {all.length > 1 && (
             <>
               <button type="button" className="button-quiet" onClick={() => go(-1)}>
-                {t('previous')}
+                <span aria-hidden="true">←</span> {t('previous')}
               </button>
               <button type="button" className="button-quiet" onClick={() => go(1)}>
-                {t('next')}
+                {t('next')} <span aria-hidden="true">→</span>
               </button>
+              <span className="ui ml-2 text-small text-muted">
+                {(current ?? 0) + 1} / {all.length}
+              </span>
             </>
           )}
           <button type="button" className="button-quiet ml-auto" onClick={() => setCurrent(null)} autoFocus>

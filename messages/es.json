@@ -10,7 +10,9 @@
     "privacy": "Privacidad",
     "legalNotice": "Aviso legal",
     "mainSite": "padrewassonfoundation.org",
-    "tryAgain": "Intentar de nuevo"
+    "tryAgain": "Intentar de nuevo",
+    "legal": "Legal",
+    "noTracking": "Sin seguimiento, sin análisis, sin cookies para quienes nos visitan."
   },
   "Overview": {
     "metaTitle": "En memoria",
@@ -32,14 +34,16 @@
     "nobodyYet": "Todavía no hay páginas aquí.",
     "requestTitle": "¿Quieres una página para alguien?",
     "requestText": "Si alguien de la familia del Padre Wasson ha fallecido y quieres recordarlo aquí, escríbenos.",
-    "requestLink": "Pedir una página en su memoria"
+    "requestLink": "Pedir una página en su memoria",
+    "peopleHeading": "Todos los que recordamos"
   },
   "Person": {
     "born": "Nació",
     "died": "Falleció",
     "nphCountry": "NPH {country}",
     "noPortrait": "Todavía sin foto",
-    "sample": "Esta es una página de ejemplo. La persona y su historia son inventadas."
+    "sample": "Esta es una página de ejemplo. La persona y su historia son inventadas.",
+    "inMemory": "En memoria"
   },
   "Memorial": {
     "photos": "Fotos",
@@ -51,7 +55,8 @@
     "next": "Foto siguiente",
     "tributes": "Palabras de familia y amigos",
     "noTributes": "Todavía nadie ha escrito. Puedes ser el primero.",
-    "backToOverview": "Todos los que recordamos"
+    "backToOverview": "Todos los que recordamos",
+    "writeSomething": "Escribir algo"
   },
   "Tribute": {
     "title": "Escribe algo para {name}",

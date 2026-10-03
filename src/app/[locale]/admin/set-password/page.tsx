@@ -16,7 +16,7 @@ export default async function SetPasswordPage({ params }: PageProps<'/[locale]/a
   if (!user) redirect({ href: '/admin/login', locale });
 
   return (
-    <div className="mx-auto max-w-site px-gutter py-10">
+    <div className="ui mx-auto max-w-site px-gutter py-16">
       <div className="max-w-sm">
         <h1>{t('newPassword')}</h1>
         <p className="mt-2 text-muted">{user?.email}</p>
