@@ -1,33 +1,18 @@
 import 'server-only';
 import { cache } from 'react';
-import { createPublicClient } from '@/lib/supabase/clients';
-import type { AlbumRow, CandleRow, PersonRow, PhotoRow, TributeRow } from '@/lib/supabase/database.types';
+import { memorials } from '@/content/memorials';
 import { yearOf } from '@/lib/dates';
+import { hasDatabase } from '@/lib/mode';
+import { createPublicClient } from '@/lib/supabase/clients';
+import type { PersonRow } from '@/lib/supabase/database.types';
+import type { PersonSummary, PublicAlbum, PublicCandle, PublicPerson, PublicPhoto, PublicTribute } from './types';
+
+export type { PersonSummary, PublicAlbum, PublicCandle, PublicPerson, PublicPhoto, PublicTribute } from './types';
 
 // The anon role may only select these columns (see the migration's grants).
-const PERSON_SUMMARY = 'id, slug, name, known_as, birth_date, birth_date_precision, death_date, death_date_precision, country, home, portrait_url, sample';
-const PERSON_FULL = `${PERSON_SUMMARY}, story, story_lang, candle_count`;
-
-export type PersonSummary = Pick<
-  PersonRow,
-  | 'id'
-  | 'slug'
-  | 'name'
-  | 'known_as'
-  | 'birth_date'
-  | 'birth_date_precision'
-  | 'death_date'
-  | 'death_date_precision'
-  | 'country'
-  | 'home'
-  | 'portrait_url'
-  | 'sample'
->;
-export type PublicPerson = PersonSummary & Pick<PersonRow, 'story' | 'story_lang' | 'candle_count'>;
-export type PublicPhoto = Pick<PhotoRow, 'id' | 'album_id' | 'storage_path' | 'thumb_path' | 'width' | 'height' | 'caption' | 'contributed_by'>;
-export type PublicAlbum = Pick<AlbumRow, 'id' | 'title' | 'description'> & { photos: PublicPhoto[] };
-export type PublicTribute = Pick<TributeRow, 'id' | 'author_name' | 'author_relation' | 'message' | 'photo_url' | 'created_at'>;
-export type PublicCandle = Pick<CandleRow, 'id' | 'author_name' | 'message' | 'created_at'>;
+const PERSON_SUMMARY =
+  'id, slug, name, known_as, birth_date, birth_date_precision, death_date, death_date_precision, country, home, portrait_url, sample, candle_count';
+const PERSON_FULL = `${PERSON_SUMMARY}, story, story_lang`;
 
 export type OverviewFilters = { q?: string; country?: string; home?: string; year?: string };
 
@@ -37,6 +22,9 @@ export function normalizeForSearch(value: string): string {
 }
 
 export const listPublishedPeople = cache(async (): Promise<PersonSummary[]> => {
+  if (!hasDatabase()) {
+    return [...memorials].sort((a, b) => a.name.localeCompare(b.name));
+  }
   const supabase = createPublicClient();
   const { data, error } = await supabase
     .from('people')
@@ -81,6 +69,9 @@ export function filterOptions(people: PersonSummary[]) {
 }
 
 export const getPublishedPerson = cache(async (slug: string): Promise<PublicPerson | null> => {
+  if (!hasDatabase()) {
+    return memorials.find((m) => m.slug === slug) ?? null;
+  }
   const supabase = createPublicClient();
   const { data, error } = await supabase
     .from('people')
@@ -93,7 +84,19 @@ export const getPublishedPerson = cache(async (slug: string): Promise<PublicPers
   return data;
 });
 
-export async function getMemorialContent(personId: string) {
+export async function getMemorialContent(
+  personId: string,
+): Promise<{ albums: PublicAlbum[]; tributes: PublicTribute[]; candles: PublicCandle[] }> {
+  if (!hasDatabase()) {
+    const memorial = memorials.find((m) => m.id === personId);
+    const newestFirst = <T extends { created_at: string }>(items: T[]) =>
+      [...items].sort((a, b) => b.created_at.localeCompare(a.created_at));
+    return {
+      albums: memorial?.albums.filter((album) => album.photos.length > 0) ?? [],
+      tributes: newestFirst(memorial?.tributes ?? []),
+      candles: newestFirst(memorial?.candles ?? []).slice(0, 12),
+    };
+  }
   const supabase = createPublicClient();
   const [albums, photos, tributes, candles] = await Promise.all([
     supabase.from('albums').select('id, title, description').eq('person_id', personId).order('sort_order').order('created_at'),

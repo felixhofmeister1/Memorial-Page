@@ -35,7 +35,8 @@
     "requestTitle": "Would you like a page for someone?",
     "requestText": "If someone from Padre Wasson's family has died and you would like to remember them here, write to us.",
     "requestLink": "Request a memorial page",
-    "peopleHeading": "Everyone we remember"
+    "peopleHeading": "Everyone we remember",
+    "candles": "{count, plural, one {# candle} other {# candles}}"
   },
   "Person": {
     "born": "Born",
@@ -139,7 +140,8 @@
       "spam": "Something went wrong. Please reload the page and try again.",
       "notFound": "This page is not open for messages.",
       "server": "Something went wrong on our side. Please try again later, or write to info@padrewassonfoundation.org."
-    }
+    },
+    "previewNote": "This site is not connected to a database yet, so nothing was saved."
   },
   "Pages": {
     "draftNote": "Draft. The foundation will replace this text.",

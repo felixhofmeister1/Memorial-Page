@@ -4,7 +4,8 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
 import { LifeDates } from '@/components/memorial/LifeDates';
 import { Place } from '@/components/memorial/Place';
-import { Portrait } from '@/components/memorial/Portrait';
+import { CandleIcon } from '@/components/memorial/CandleIcon';
+import { initialOf, Portrait } from '@/components/memorial/Portrait';
 import { sortedCountries } from '@/lib/countries';
 import { filterOptions, filterPeople, listPublishedPeople, type OverviewFilters } from '@/lib/data/public';
 
@@ -130,7 +131,7 @@ export default async function OverviewPage({ params, searchParams }: PageProps<'
             {people.map((person) => (
               <li key={person.id} className="border-t border-line">
                 <Link href={`/remembered/${person.slug}`} className="group flex gap-5 py-7 text-ink no-underline sm:gap-6">
-                  <Portrait path={person.portrait_url} name="" sizes="small" className="print w-24 shrink-0 sm:w-28" />
+                  <Portrait path={person.portrait_url} name="" initial={initialOf(person)} sizes="small" className="print w-24 shrink-0 sm:w-28" />
                   <span className="block min-w-0 self-center">
                     <span className="block font-serif text-[1.5rem] leading-[1.2] decoration-1 underline-offset-[5px] group-hover:underline">
                       {person.name}
@@ -143,6 +144,12 @@ export default async function OverviewPage({ params, searchParams }: PageProps<'
                       className="mt-2 italic text-ink/85"
                     />
                     <Place country={person.country} home={person.home} className="ui mt-1 text-small text-muted" />
+                    {person.candle_count > 0 && (
+                      <span className="ui mt-3 flex items-center gap-1.5 text-small text-muted">
+                        <CandleIcon lit size="small" className="text-ink/70" />
+                        {t('candles', { count: person.candle_count })}
+                      </span>
+                    )}
                   </span>
                 </Link>
               </li>

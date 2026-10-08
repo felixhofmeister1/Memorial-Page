@@ -35,7 +35,8 @@
     "requestTitle": "Möchtest du eine Seite für jemanden?",
     "requestText": "Wenn jemand aus Padre Wassons Familie gestorben ist und du hier an ihn oder sie erinnern möchtest, schreib uns.",
     "requestLink": "Eine Gedenkseite anfragen",
-    "peopleHeading": "Alle, an die wir erinnern"
+    "peopleHeading": "Alle, an die wir erinnern",
+    "candles": "{count, plural, one {# Kerze} other {# Kerzen}}"
   },
   "Person": {
     "born": "Geboren",
@@ -139,7 +140,8 @@
       "spam": "Etwas ist schiefgegangen. Bitte lad die Seite neu und versuch es noch einmal.",
       "notFound": "Auf dieser Seite kann man nichts hinterlassen.",
       "server": "Bei uns ist etwas schiefgegangen. Bitte versuch es später noch einmal oder schreib an info@padrewassonfoundation.org."
-    }
+    },
+    "previewNote": "Diese Seite ist noch nicht mit einer Datenbank verbunden, darum wurde nichts gespeichert."
   },
   "Pages": {
     "draftNote": "Entwurf. Die Stiftung ersetzt diesen Text.",

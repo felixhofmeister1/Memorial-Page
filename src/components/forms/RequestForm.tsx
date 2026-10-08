@@ -7,6 +7,7 @@ import { requestMemorial } from '@/lib/actions/public';
 import { initialFormState } from '@/lib/forms';
 import { CheckboxField, FormMessage, SpamGuards, TextField } from './fields';
 import { PhotoField } from './PhotoField';
+import { PreviewNote } from './PreviewNote';
 
 type Props = { token: string; countries: { code: string; name: string }[] };
 
@@ -21,6 +22,7 @@ export function RequestForm({ token, countries }: Props) {
     return (
       <p role="status" className="panel mt-12 p-8 font-serif text-[1.25rem] italic">
         {t('thanks')}
+        <PreviewNote show={state.preview} />
       </p>
     );
   }

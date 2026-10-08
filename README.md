@@ -6,12 +6,35 @@ friends, a candle, and a link to give in their memory. Families and NPH staff ca
 page; nothing is published before the family and NPH have agreed.
 
 The pages are meant to sit inside padrewassonfoundation.org (menu MEET → Remembered) and
-look like the rest of that site. **The visual design is not finished yet**: see
-[DESIGN.md](DESIGN.md) for why and for the exact steps.
+look like the rest of that site. The current look is an **interim design**: see
+[DESIGN.md](DESIGN.md) for why and for the steps to match the real site.
 
 - Next.js 16 (App Router) · TypeScript · Tailwind CSS 4 · next-intl (English, German, Spanish)
 - Supabase: Postgres with Row Level Security, Auth (staff only), Storage
 - Deploys to Vercel. No analytics, no tracking, no cookies for visitors.
+
+## Preview mode: no database yet
+
+The site runs without any setup. As long as `SUPABASE_URL` and `SUPABASE_ANON_KEY` are not
+set, it is in **preview mode**:
+
+- The memorials come from [`src/content/memorials.ts`](src/content/memorials.ts) (three invented
+  sample people). Edit that file to change or add pages; the comments at the top explain the fields.
+  Photos go in `public/memorials/<slug>/`.
+- The forms (tribute, candle, request) check what people type, then say that nothing was saved,
+  because there is nowhere to save it yet.
+- There is no admin area and no sign-in: `/admin` does not exist.
+
+```bash
+npm install
+npm run dev      # http://localhost:3000/remembered
+```
+
+It also deploys to Vercel as it is: import the repository, no environment variables needed.
+
+When the database is ready, follow "Deploying" below and set the Supabase variables. The site
+then reads from the database, the forms save, and the admin area with sign-in appears. Nothing
+in the code needs to change.
 
 ## Pages
 
@@ -63,7 +86,7 @@ and **editor** (moderate, edit and publish memorials).
   `TURNSTILE_SECRET_KEY`) but loads a third-party script, so it is off by default.
 - Pages carry `noindex` and `robots.txt` disallows everything until `ALLOW_INDEXING=true`.
 
-## Local development
+## Local development with the database
 
 You need Node.js 20.9+ and Docker (for the Supabase CLI).
 

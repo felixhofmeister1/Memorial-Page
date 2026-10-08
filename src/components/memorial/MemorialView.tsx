@@ -7,7 +7,7 @@ import { DonateInMemory } from './DonateInMemory';
 import { LifeDates } from './LifeDates';
 import { PhotoAlbums } from './PhotoAlbums';
 import { Place } from './Place';
-import { Portrait } from './Portrait';
+import { initialOf, Portrait } from './Portrait';
 import { Story } from './Story';
 import { TributeForm } from './TributeForm';
 import { TributeList } from './TributeList';
@@ -41,14 +41,14 @@ export async function MemorialView({ person, albums, tributes, candles, formToke
 
       {/* Name, dates, place ------------------------------------------------------ */}
       <header className="mx-auto max-w-site px-gutter pt-8 md:pt-12">
-        <p className="ui text-small">
+        <p className="ui no-print text-small">
           <Link href="/remembered" className="text-muted no-underline hover:text-ink hover:underline">
             <span aria-hidden="true">← </span>
             {t('backToOverview')}
           </Link>
         </p>
         <div className="mt-8 grid gap-8 md:mt-12 md:grid-cols-[minmax(0,20rem)_1fr] md:items-end md:gap-14 lg:grid-cols-[minmax(0,22rem)_1fr]">
-          <Portrait path={person.portrait_url} name={person.name} className="print w-full max-w-[15rem] md:max-w-[22rem]" />
+          <Portrait path={person.portrait_url} name={person.name} initial={initialOf(person)} className="print w-full max-w-[15rem] md:max-w-[22rem]" />
           <div className="md:pb-3">
             <p className="eyebrow">{tp('inMemory')}</p>
             <h1 className="mt-4">{person.name}</h1>
@@ -75,7 +75,7 @@ export async function MemorialView({ person, albums, tributes, candles, formToke
         </div>
       </header>
 
-      <div className="mx-auto mt-14 grid max-w-site gap-x-16 gap-y-16 px-gutter md:mt-20 md:grid-cols-[minmax(0,1fr)_19rem]">
+      <div className="memorial-body mx-auto mt-14 grid max-w-site gap-x-16 gap-y-16 px-gutter md:mt-20 md:grid-cols-[minmax(0,1fr)_19rem]">
         {/* Story ------------------------------------------------------------------ */}
         <div className="min-w-0">
           <Story text={person.story} lang={person.story_lang} className="max-w-text" />

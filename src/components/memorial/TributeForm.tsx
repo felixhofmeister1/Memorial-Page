@@ -6,6 +6,7 @@ import { submitTribute } from '@/lib/actions/public';
 import { initialFormState } from '@/lib/forms';
 import { FormMessage, SpamGuards, TextField } from '@/components/forms/fields';
 import { PhotoField } from '@/components/forms/PhotoField';
+import { PreviewNote } from '@/components/forms/PreviewNote';
 
 type Props = { personId: string; name: string; token: string };
 
@@ -18,6 +19,7 @@ export function TributeForm({ personId, name, token }: Props) {
     return (
       <p role="status" className="font-serif text-[1.1875rem] italic">
         {t('thanks')}
+        <PreviewNote show={state.preview} />
       </p>
     );
   }

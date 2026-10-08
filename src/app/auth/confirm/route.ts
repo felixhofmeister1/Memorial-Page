@@ -1,5 +1,6 @@
 import type { EmailOtpType } from '@supabase/supabase-js';
 import { NextResponse, type NextRequest } from 'next/server';
+import { hasDatabase } from '@/lib/mode';
 import { createSessionClient } from '@/lib/supabase/clients';
 
 /**
@@ -7,6 +8,7 @@ import { createSessionClient } from '@/lib/supabase/clients';
  * The Supabase email templates must point here, see README "Staff accounts".
  */
 export async function GET(request: NextRequest) {
+  if (!hasDatabase()) return NextResponse.redirect(new URL('/', request.url));
   const { searchParams } = request.nextUrl;
   const tokenHash = searchParams.get('token_hash');
   const type = searchParams.get('type') as EmailOtpType | null;

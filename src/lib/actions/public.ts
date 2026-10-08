@@ -5,6 +5,7 @@ import { routing } from '@/i18n/routing';
 import { NPH_COUNTRIES } from '@/lib/countries';
 import { fieldErrorsFrom, textValues, type ErrorCode, type FormState } from '@/lib/forms';
 import { hasFile, processImage, storeImage, deleteImage } from '@/lib/images';
+import { hasDatabase } from '@/lib/mode';
 import { checkFormToken, honeypotFilled, turnstilePassed, withinRateLimit } from '@/lib/spam';
 import { createPublicClient, createServiceClient } from '@/lib/supabase/clients';
 
@@ -44,6 +45,16 @@ const optionalText = (max: number) =>
 
 const requiredText = (max: number) => z.string().trim().min(1).max(max);
 
+/** Preview mode: the photo is still checked (so errors show as they will later), then dropped. */
+async function previewResult(formData: FormData, values: Record<string, string>, extra: Partial<FormState> = {}): Promise<FormState> {
+  const photo = formData.get('photo');
+  if (hasFile(photo)) {
+    const image = await processImage(photo);
+    if (typeof image === 'string') return { status: 'error', fieldErrors: { photo: image }, values };
+  }
+  return { status: 'success', preview: true, ...extra };
+}
+
 function databaseErrorCode(error: { code?: string; hint?: string | null }): ErrorCode {
   if (error.hint === 'rate_limited') return 'rateLimited';
   if (error.code === '42501') return 'notFound'; // row-level security: page not published
@@ -73,6 +84,7 @@ export async function submitTribute(_prev: FormState, formData: FormData): Promi
     message: formData.get('message') ?? '',
   });
   if (!parsed.success) return { status: 'error', fieldErrors: fieldErrorsFrom(parsed.error), values };
+  if (!hasDatabase()) return previewResult(formData, values);
 
   if (!(await withinRateLimit('tribute', 6, 3600))) {
     return { status: 'error', formError: 'rateLimited', values };
@@ -130,6 +142,9 @@ export async function lightCandle(_prev: FormState, formData: FormData): Promise
     message: formData.get('message') ?? '',
   });
   if (!parsed.success) return { status: 'error', fieldErrors: fieldErrorsFrom(parsed.error), values };
+  if (!hasDatabase()) {
+    return previewResult(formData, values, { withWords: !!(parsed.data.author_name || parsed.data.message) });
+  }
 
   if (!(await withinRateLimit('candle', 12, 3600))) {
     return { status: 'error', formError: 'rateLimited', values };
@@ -196,6 +211,7 @@ export async function requestMemorial(_prev: FormState, formData: FormData): Pro
   raw.family_informed = formData.get('family_informed') === 'on';
   const parsed = requestSchema.safeParse(raw);
   if (!parsed.success) return { status: 'error', fieldErrors: fieldErrorsFrom(parsed.error), values };
+  if (!hasDatabase()) return previewResult(formData, values);
 
   if (!(await withinRateLimit('request', 3, 3600))) {
     return { status: 'error', formError: 'rateLimited', values };

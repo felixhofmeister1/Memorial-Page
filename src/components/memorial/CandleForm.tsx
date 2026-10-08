@@ -5,6 +5,7 @@ import { useActionState } from 'react';
 import { lightCandle } from '@/lib/actions/public';
 import { initialFormState } from '@/lib/forms';
 import { FormMessage, SpamGuards, TextField } from '@/components/forms/fields';
+import { PreviewNote } from '@/components/forms/PreviewNote';
 import { CandleIcon } from './CandleIcon';
 
 type Props = { personId: string; name: string; count: number; token: string };
@@ -28,6 +29,7 @@ export function CandleForm({ personId, name, count, token }: Props) {
       {lit ? (
         <p role="status" className="mt-5 font-serif italic">
           {state.withWords ? t('litWithWords') : t('lit')}
+          <PreviewNote show={state.preview} />
         </p>
       ) : (
         <form action={formAction} className="mt-5 space-y-4">

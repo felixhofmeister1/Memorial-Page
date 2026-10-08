@@ -35,7 +35,8 @@
     "requestTitle": "¿Quieres una página para alguien?",
     "requestText": "Si alguien de la familia del Padre Wasson ha fallecido y quieres recordarlo aquí, escríbenos.",
     "requestLink": "Pedir una página en su memoria",
-    "peopleHeading": "Todos los que recordamos"
+    "peopleHeading": "Todos los que recordamos",
+    "candles": "{count, plural, one {# vela} other {# velas}}"
   },
   "Person": {
     "born": "Nació",
@@ -139,7 +140,8 @@
       "spam": "Algo salió mal. Por favor, recarga la página e inténtalo de nuevo.",
       "notFound": "En esta página no se pueden dejar mensajes.",
       "server": "Algo salió mal de nuestro lado. Por favor, inténtalo más tarde o escribe a info@padrewassonfoundation.org."
-    }
+    },
+    "previewNote": "Este sitio todavía no está conectado a una base de datos, así que no se guardó nada."
   },
   "Pages": {
     "draftNote": "Borrador. La fundación reemplazará este texto.",

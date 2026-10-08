@@ -2,6 +2,7 @@ import 'server-only';
 import { cache } from 'react';
 import { getLocale } from 'next-intl/server';
 import { redirect } from '@/i18n/navigation';
+import { hasDatabase, requireDatabase } from '@/lib/mode';
 import { createSessionClient } from '@/lib/supabase/clients';
 import type { StaffRole } from '@/lib/supabase/database.types';
 
@@ -9,6 +10,7 @@ export type Staff = { userId: string; email: string; role: StaffRole; displayNam
 
 /** The signed-in user and, if they are on the staff list, their role. Verified with the Auth server. */
 export const getCurrentStaff = cache(async () => {
+  if (!hasDatabase()) return { user: null, staff: null };
   const supabase = await createSessionClient();
   const {
     data: { user },
@@ -24,6 +26,7 @@ export const getCurrentStaff = cache(async () => {
 
 /** For admin pages: sends visitors who are not signed in to the login page. */
 export async function requireStaffPage(): Promise<Staff> {
+  requireDatabase(); // no admin area before there is a database
   const { user, staff } = await getCurrentStaff();
   if (!user || !staff) {
     const locale = await getLocale();

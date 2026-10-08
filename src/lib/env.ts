@@ -19,6 +19,9 @@ export const env = {
     return required('SUPABASE_SERVICE_ROLE_KEY');
   },
   get submissionSecret() {
+    // In preview mode (no database) forms save nothing, so a fixed value is harmless.
+    // With a database the real secret is required.
+    if (!process.env.SUBMISSION_SECRET && !process.env.SUPABASE_URL) return 'preview-mode-no-database';
     return required('SUBMISSION_SECRET');
   },
   get siteUrl() {

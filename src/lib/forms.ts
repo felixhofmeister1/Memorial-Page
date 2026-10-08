@@ -23,6 +23,8 @@ export type FormState = {
   values?: Record<string, string>;
   /** Candles: whether the visitor added a name or words (those wait for moderation). */
   withWords?: boolean;
+  /** Preview mode: everything was checked, but there is no database yet, so nothing was saved. */
+  preview?: boolean;
 };
 
 export const initialFormState: FormState = { status: 'idle' };

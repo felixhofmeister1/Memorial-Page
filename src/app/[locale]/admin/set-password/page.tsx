@@ -3,6 +3,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { StatefulForm } from '@/components/admin/StatefulForm';
 import { setPassword } from '@/lib/actions/admin';
 import { getCurrentStaff } from '@/lib/auth';
+import { requireDatabase } from '@/lib/mode';
 import { Link, redirect } from '@/i18n/navigation';
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
@@ -11,6 +12,7 @@ export const metadata: Metadata = { robots: { index: false, follow: false } };
 export default async function SetPasswordPage({ params }: PageProps<'/[locale]/admin/set-password'>) {
   const { locale } = await params;
   setRequestLocale(locale);
+  requireDatabase(); // sign-in only exists once there is a database
   const t = await getTranslations('Admin');
   const { user } = await getCurrentStaff();
   if (!user) redirect({ href: '/admin/login', locale });

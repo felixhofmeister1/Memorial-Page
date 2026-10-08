@@ -11,11 +11,14 @@ export async function proxy(request: NextRequest) {
   const response = handleI18nRouting(request);
 
   // Only staff pages carry a session. Public pages stay cookie-free.
-  if (!ADMIN_PATH.test(request.nextUrl.pathname)) {
+  // Without a database (preview mode) there is no admin area at all.
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_ANON_KEY;
+  if (!ADMIN_PATH.test(request.nextUrl.pathname) || !supabaseUrl || !supabaseKey) {
     return response;
   }
 
-  const supabase = createServerClient(process.env.SUPABASE_URL!, process.env.SUPABASE_ANON_KEY!, {
+  const supabase = createServerClient(supabaseUrl, supabaseKey, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
