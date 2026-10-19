@@ -4,7 +4,7 @@ const plural = (n: number, one: string, other: string) => (n === 1 ? one : other
 
 export const de: Messages = {
   site: {
-    name: 'Remembered',
+    name: 'Unvergessen',
     family: 'Die Familie von Padre Wasson',
     skip: 'Zum Inhalt springen',
     everyone: 'Alle',
@@ -38,7 +38,7 @@ export const de: Messages = {
     noFile: 'Kein Foto ausgewählt',
   },
   home: {
-    title: 'Remembered',
+    title: 'Unvergessen',
     lede: 'Die Familie von Padre Wasson ist groß, und jedes Jahr verlieren wir Brüder und Schwestern, viele von ihnen viel zu jung. Hier erinnern wir an sie: an ihre Namen, ihre Gesichter, ihre Geschichten und an die Worte der Menschen, die sie geliebt haben.',
     search: 'Nach Namen suchen',
     country: 'Land',
@@ -68,7 +68,7 @@ export const de: Messages = {
   person: {
     previous: 'Vorheriges Foto',
     next: 'Nächstes Foto',
-    inMemory: 'In Erinnerung',
+    inMemory: 'In Erinnerung an',
     aged: (n: number) => `${n} Jahre alt`,
     lightCandle: 'Eine Kerze anzünden',
     write: 'Etwas schreiben',
@@ -140,7 +140,10 @@ export const de: Messages = {
     countryOther: 'Ein anderes Land',
     countryOtherName: 'Welches Land?',
     home: 'NPH-Heim',
-    homeHint: 'Wo sie aufgewachsen sind, zum Beispiel Casa San Salvador, Miacatlán.',
+    homeHint: 'Wo sie aufgewachsen sind. Steht das Heim nicht in der Liste, wählt „Ein anderes Heim“.',
+    homeNone: 'Nicht bekannt',
+    homeOther: 'Ein anderes Heim',
+    homeOtherName: 'Welches Heim?',
     story: 'Ihre Geschichte',
     storyHint: 'Einfacher Text. Lasst zwischen Absätzen eine Zeile frei.',
     create: 'Seite anlegen',
@@ -197,7 +200,7 @@ export const de: Messages = {
   about: {
     title: 'Über diese Gedenkseite',
     intro: [
-      'Remembered ist ein Ort für die verstorbenen Brüder und Schwestern der Familie von Padre Wasson: für die Kinder und jungen Menschen, die in den Häusern von Nuestros Pequeños Hermanos aufgewachsen sind, und für alle, die zur Familie gehörten.',
+      '„Unvergessen“ ist ein Ort für die verstorbenen Brüder und Schwestern der Familie von Padre Wasson: für die Kinder und jungen Menschen, die in den Häusern von Nuestros Pequeños Hermanos aufgewachsen sind, und für alle, die zur Familie gehörten.',
       'Jede Person hat eine eigene Seite mit Porträt, Lebensdaten, dem Heim, in dem sie aufgewachsen ist, ihrer Geschichte und Fotos. Familie und Freunde können ein paar Worte schreiben oder eine Kerze anzünden.',
     ],
     whereTitle: 'Wo alles gespeichert wird',

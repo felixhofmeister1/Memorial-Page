@@ -5,17 +5,18 @@ import { en, type Messages } from './en';
 import { es } from './es';
 
 export type Lang = 'en' | 'de' | 'es';
+// Spanish first: it is the language of most of the family.
 export const LANGS: { code: Lang; name: string }[] = [
+  { code: 'es', name: 'Español' },
   { code: 'en', name: 'English' },
   { code: 'de', name: 'Deutsch' },
-  { code: 'es', name: 'Español' },
 ];
 
 export const MESSAGES: Record<Lang, Messages> = { en, de, es };
 
 const STORAGE_KEY = 'remembered-lang';
 
-/** The language chosen last time, else the browser's, else English. */
+/** The language chosen last time on this browser, else Spanish. */
 export function initialLang(): Lang {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -23,8 +24,7 @@ export function initialLang(): Lang {
   } catch {
     // storage may be blocked; fall through
   }
-  const browser = (navigator.language || 'en').slice(0, 2);
-  return browser === 'de' || browser === 'es' ? browser : 'en';
+  return 'es';
 }
 
 export function rememberLang(lang: Lang) {

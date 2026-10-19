@@ -4,12 +4,12 @@ const plural = (n: number, one: string, other: string) => (n === 1 ? one : other
 
 export const es: Messages = {
   site: {
-    name: 'Remembered',
+    name: 'Los recordamos',
     family: 'La familia del Padre Wasson',
     skip: 'Ir al contenido',
     everyone: 'Todos',
     add: 'Añadir a alguien',
-    about: 'Acerca de y copia',
+    about: 'Información y copias',
     menu: 'Menú principal',
     language: 'Idioma',
     private: 'Todo lo de esta página de recuerdo se guarda solo en este navegador, en este dispositivo. No se envía nada a ningún sitio.',
@@ -38,7 +38,7 @@ export const es: Messages = {
     noFile: 'Ninguna foto elegida',
   },
   home: {
-    title: 'Remembered',
+    title: 'Los recordamos',
     lede: 'La familia del Padre Wasson es grande, y cada año perdemos a algunos de nuestros hermanos y hermanas, muchos de ellos demasiado jóvenes. Aquí los recordamos: sus nombres, sus rostros, sus historias y las palabras de quienes los quisieron.',
     search: 'Buscar por nombre',
     country: 'País',
@@ -68,7 +68,7 @@ export const es: Messages = {
   person: {
     previous: 'Foto anterior',
     next: 'Foto siguiente',
-    inMemory: 'En memoria',
+    inMemory: 'En memoria de',
     aged: (n: number) => `a los ${n} años`,
     lightCandle: 'Encender una vela',
     write: 'Escribir algo',
@@ -140,7 +140,10 @@ export const es: Messages = {
     countryOther: 'Otro país',
     countryOtherName: '¿Qué país?',
     home: 'Hogar de NPH',
-    homeHint: 'Donde creció, por ejemplo Casa San Salvador, Miacatlán.',
+    homeHint: 'Donde creció. Si el hogar no está en la lista, elija «Otro hogar».',
+    homeNone: 'No se sabe',
+    homeOther: 'Otro hogar',
+    homeOtherName: '¿Qué hogar?',
     story: 'Su historia',
     storyHint: 'Texto sencillo. Deje una línea en blanco entre párrafos.',
     create: 'Crear la página',
@@ -197,7 +200,7 @@ export const es: Messages = {
   about: {
     title: 'Acerca de esta página de recuerdo',
     intro: [
-      'Remembered es un lugar para los hermanos y hermanas de la familia del Padre Wasson que han fallecido: los niños y jóvenes que crecieron en los hogares de Nuestros Pequeños Hermanos, y todos los que formaron parte de la familia.',
+      '«Los recordamos» es un lugar para los hermanos y hermanas de la familia del Padre Wasson que han fallecido: los niños y jóvenes que crecieron en los hogares de Nuestros Pequeños Hermanos, y todos los que formaron parte de la familia.',
       'Cada persona tiene su página con su retrato, sus fechas, el hogar donde creció, su historia y fotos. La familia y los amigos pueden dejar unas palabras o encender una vela.',
     ],
     whereTitle: 'Dónde se guarda todo',

@@ -23,6 +23,7 @@ import {
 import type { Album, Person, Photo } from '../data/types';
 import { useI18n } from '../i18n';
 import { countryName, isNphCountry, NPH_COUNTRIES } from '../lib/countries';
+import { findHome, NPH_HOMES } from '../lib/homes';
 import { compareDates, parseDateInput, toDateInput, type DateInput, type DateProblem } from '../lib/dates';
 import { confirmAction, toast } from '../lib/feedback';
 import { ImageError } from '../lib/images';
@@ -44,11 +45,37 @@ function DetailsForm({ person }: { person: Person | null }) {
   const initialCountry = person?.country ?? '';
   const [countryChoice, setCountryChoice] = useState(initialCountry === '' || isNphCountry(initialCountry) ? initialCountry : 'other');
   const [otherCountry, setOtherCountry] = useState(initialCountry && !isNphCountry(initialCountry) ? initialCountry : '');
-  const [home, setHome] = useState(person?.home ?? '');
+  const initialHome = person?.home ?? '';
+  // A home from the list is chosen in the menu; any other home is written in by hand.
+  const [homeChoice, setHomeChoice] = useState(initialHome === '' || findHome(initialHome) ? initialHome : 'other');
+  const [otherHome, setOtherHome] = useState(initialHome && !findHome(initialHome) ? initialHome : '');
   const [story, setStory] = useState(person?.story ?? '');
   const [errors, setErrors] = useState<DetailsErrors>({});
   const [busy, setBusy] = useState(false);
-  const { data: homes } = useLive(async () => [...new Set((await listPeople()).map((p) => p.home).filter(Boolean))].sort(), []);
+  // Homes written in by hand on other pages, offered again as suggestions.
+  const { data: writtenHomes } = useLive(
+    async () => [...new Set((await listPeople()).map((p) => p.home).filter((h) => h && !findHome(h)))].sort(),
+    [],
+  );
+
+  const chooseCountry = (value: string) => {
+    setCountryChoice(value);
+    // A home from another country no longer fits.
+    const listed = findHome(homeChoice);
+    if (listed && value !== 'other' && value !== '' && listed.country !== value) setHomeChoice('');
+  };
+
+  const chooseHome = (value: string) => {
+    setHomeChoice(value);
+    // Choosing a home also tells us the country.
+    const listed = findHome(value);
+    if (listed) setCountryChoice(listed.country);
+  };
+
+  const homeGroups = NPH_COUNTRIES.filter((code) => !isNphCountry(countryChoice) || code === countryChoice).map((code) => ({
+    code,
+    homes: NPH_HOMES.filter((h) => h.country === code),
+  }));
 
   const problemText = (problem: DateProblem) =>
     problem === 'incomplete' ? t.edit.dateIncomplete : problem === 'future' ? t.edit.dateFuture : t.edit.dateImpossible;
@@ -76,7 +103,7 @@ function DetailsForm({ person }: { person: Person | null }) {
         birth: b.date,
         death: d.date,
         country: countryChoice === 'other' ? otherCountry : countryChoice,
-        home,
+        home: homeChoice === 'other' ? otherHome : homeChoice,
         story,
       };
       if (person) {
@@ -139,7 +166,7 @@ function DetailsForm({ person }: { person: Person | null }) {
           <label class="label" for="country">
             {t.edit.country}
           </label>
-          <select id="country" class="field" value={countryChoice} onChange={(e) => setCountryChoice(e.currentTarget.value)}>
+          <select id="country" class="field" value={countryChoice} onChange={(e) => chooseCountry(e.currentTarget.value)}>
             <option value="">{t.edit.countryNone}</option>
             {NPH_COUNTRIES.map((code) => (
               <option key={code} value={code}>
@@ -164,12 +191,40 @@ function DetailsForm({ person }: { person: Person | null }) {
           <span class="hint" id="home-hint">
             {t.edit.homeHint}
           </span>
-          <input id="home" class="field" list="known-homes" value={home} maxLength={120} aria-describedby="home-hint" onInput={(e) => setHome(e.currentTarget.value)} />
-          <datalist id="known-homes">
-            {(homes ?? []).map((h) => (
-              <option key={h} value={h} />
-            ))}
-          </datalist>
+          <select id="home" class="field" value={homeChoice} aria-describedby="home-hint" onChange={(e) => chooseHome(e.currentTarget.value)}>
+            <option value="">{t.edit.homeNone}</option>
+            {homeGroups.map((group) =>
+              homeGroups.length === 1 ? (
+                group.homes.map((h) => (
+                  <option key={h.value} value={h.value}>
+                    {h.value}
+                  </option>
+                ))
+              ) : (
+                <optgroup key={group.code} label={countryName(group.code, lang)}>
+                  {group.homes.map((h) => (
+                    <option key={h.value} value={h.value}>
+                      {h.value}
+                    </option>
+                  ))}
+                </optgroup>
+              ),
+            )}
+            <option value="other">{t.edit.homeOther}</option>
+          </select>
+          {homeChoice === 'other' && (
+            <div class="follow-up">
+              <label class="label" for="home-other">
+                {t.edit.homeOtherName}
+              </label>
+              <input id="home-other" class="field" list="written-homes" value={otherHome} maxLength={120} onInput={(e) => setOtherHome(e.currentTarget.value)} />
+              <datalist id="written-homes">
+                {(writtenHomes ?? []).map((h) => (
+                  <option key={h} value={h} />
+                ))}
+              </datalist>
+            </div>
+          )}
         </div>
         <div class="form-wide">
           <label class="label" for="story">

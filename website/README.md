@@ -1,8 +1,13 @@
-# Remembered: the memorial website
+# Los recordamos · Remembered · Unvergessen
 
 A memorial for the Padre Wasson family: one page for each brother and sister who has died,
 with their portrait, dates, home, story, photo albums, words from family and friends, and a
-candle. English, German and Spanish.
+candle.
+
+It speaks Spanish, English and German, with the choice at the top of every page. Spanish is
+the default; a language once chosen is remembered by the browser. The site's name follows
+the language: *Los recordamos*, *Remembered*, *Unvergessen*. What people write (names,
+stories, words) is shown as written.
 
 **Live:** <https://felixhofmeister1.github.io/Memorial-Page/>
 
@@ -33,6 +38,14 @@ So:
   Print-friendly.
 - **Add someone / Edit this page:** details, portrait, photos (several at once, captions,
   "photo from", albums, reordering, "use as portrait"), albums, delete.
+- **NPH homes to choose from,** grouped by country (`src/lib/homes.ts`, with sources):
+  Casa San Salvador (Miacatlán), Casa Buen Señor (Cuernavaca), Casa San Luis (Monterrey);
+  Rancho Santa Fe, Casa de los Ángeles (Tegucigalpa), Casa Eva; St. Hélène (Kenscoff),
+  Kay Christine, Father Wasson Angels of Light (Tabarre); Casa Padre Wasson (Jinotepe),
+  Isla de Ometepe; Casa San Andrés (Parramos); Casa Sagrada Familia (Texistepeque);
+  Casa Santa Ana (San Pedro de Macorís); Casa Padre Wasson (San Ignacio de Sara),
+  Portachuelo; Casa Santa Rosa (Cañete). Choosing a home fills in the country; any other
+  home can be written in.
 - Photos are turned upright, scaled down (2000 px, plus a 720 px version for lists) and saved
   again as JPEG in the browser, which also removes camera data such as the location.
 

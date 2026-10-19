@@ -194,6 +194,49 @@ ul {
 
 /* ------------------------------------------------------------------ frame */
 
+.lang-bar {
+  background: var(--paper-deep);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--sans);
+  font-size: 0.875rem;
+}
+
+.lang-bar-inner {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0.4rem var(--gutter);
+}
+
+.lang-bar li + li::before {
+  content: '|';
+  color: var(--line-strong);
+  padding: 0 0.7rem;
+}
+
+.lang-bar span[aria-current] {
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.lang-bar button {
+  padding: 0.2rem 0;
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.lang-bar button:hover {
+  color: var(--accent-hover);
+}
+
 .site-header {
   border-bottom: 1px solid var(--line);
   background: var(--paper);
@@ -292,6 +335,17 @@ ul {
   font-weight: 600;
 }
 
+@media (max-width: 30rem) {
+  .site-nav {
+    gap: 0.6rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .site-nav .nav-add {
+    padding: 0.35rem 0.6rem;
+  }
+}
+
 .site-nav .nav-add:hover,
 .site-nav .nav-add[aria-current='page'] {
   background: var(--accent);
@@ -312,10 +366,7 @@ ul {
 }
 
 .site-footer-inner {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 1.5rem 3rem;
+  display: block;
   padding-top: 2.25rem;
   padding-bottom: 2.5rem;
 }
@@ -333,21 +384,6 @@ ul {
   margin-top: 0.5rem;
   max-width: 38rem;
   color: var(--muted);
-}
-
-.language-strip ul {
-  display: flex;
-  gap: 0;
-}
-
-.language-strip li + li::before {
-  content: '|';
-  color: var(--line-strong);
-  padding: 0 0.6rem;
-}
-
-.language-strip span[aria-current] {
-  font-weight: 700;
 }
 
 /* ------------------------------------------------------------------ controls */
@@ -1717,6 +1753,7 @@ dialog.lightbox::backdrop {
   }
 
   .site-header nav,
+  .lang-bar,
   .site-footer,
   .no-print,
   .toaster,

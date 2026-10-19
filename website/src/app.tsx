@@ -9,6 +9,30 @@ import { Home } from './pages/Home';
 import { Memorial } from './pages/Memorial';
 import { NotFound } from './pages/NotFound';
 
+/** The three languages, at the very top of every page. */
+function LanguageBar() {
+  const { t, lang, setLang } = useI18n();
+  return (
+    <nav aria-label={t.site.language} class="lang-bar">
+      <ul class="lang-bar-inner">
+        {LANGS.map((l) => (
+          <li key={l.code}>
+            {l.code === lang ? (
+              <span aria-current="true" lang={l.code}>
+                {l.name}
+              </span>
+            ) : (
+              <button type="button" lang={l.code} onClick={() => setLang(l.code)}>
+                {l.name}
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
 function Header({ route }: { route: Route }) {
   const { t } = useI18n();
   const current = (name: Route['name']) => (route.name === name ? 'page' : undefined);
@@ -48,35 +72,16 @@ function Header({ route }: { route: Route }) {
 }
 
 function Footer() {
-  const { t, lang, setLang } = useI18n();
+  const { t } = useI18n();
   return (
     <footer class="site-footer">
       <div class="site-footer-inner">
-        <div>
-          <p class="footer-name">
-            {t.site.name} <span class="muted">· {t.site.family}</span>
-          </p>
-          <p class="footer-note">
-            {t.site.private} {t.site.noTracking}
-          </p>
-        </div>
-        <nav aria-label={t.site.language} class="language-strip">
-          <ul>
-            {LANGS.map((l) => (
-              <li key={l.code}>
-                {l.code === lang ? (
-                  <span aria-current="true" lang={l.code}>
-                    {l.name}
-                  </span>
-                ) : (
-                  <button type="button" class="link-button" lang={l.code} onClick={() => setLang(l.code)}>
-                    {l.name}
-                  </button>
-                )}
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <p class="footer-name">
+          {t.site.name} <span class="muted">· {t.site.family}</span>
+        </p>
+        <p class="footer-note">
+          {t.site.private} {t.site.noTracking}
+        </p>
       </div>
     </footer>
   );
@@ -193,9 +198,13 @@ export function App() {
     document.documentElement.lang = lang;
   }, [lang]);
 
-  // A new page: start at the top, give it its title, and move the keyboard focus to its heading.
+  // Pages without a title of their own carry the site's name, in the chosen language.
   useEffect(() => {
     if (route.name === 'home' || route.name === 'notFound') document.title = MESSAGES[lang].site.name;
+  }, [key, lang]);
+
+  // A new page: start at the top and move the keyboard focus to its heading.
+  useEffect(() => {
     window.scrollTo(0, 0);
     if (firstRender.current) {
       firstRender.current = false;
@@ -219,6 +228,7 @@ export function App() {
       }}>
         {i18n.t.site.skip}
       </a>
+      <LanguageBar />
       <Header route={route} />
       <main id="main" ref={main} tabIndex={-1} class="site-main">
         <Page route={route} />
