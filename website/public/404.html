@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Remembered</title>
+    <script>
+      // Every page of the memorial lives at the start address (after a #). Go there.
+      var parts = location.pathname.split('/').filter(Boolean);
+      var base = location.hostname.endsWith('github.io') && parts.length ? '/' + parts[0] + '/' : '/';
+      if (location.pathname !== base) location.replace(base);
+    </script>
+    <style>
+      body { margin: 0; background: #faf7f2; color: #2a2420; font: 1.125rem/1.6 Georgia, serif; }
+      p { max-width: 32rem; margin: 5rem auto; padding: 0 1.25rem; }
+      a { color: #8c3b22; }
+    </style>
+  </head>
+  <body>
+    <p>This address does not exist. <a href="/">Go to the memorial</a>.</p>
+  </body>
+</html>

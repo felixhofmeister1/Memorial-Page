@@ -13,6 +13,15 @@ look like the rest of that site. The current look is an **interim design**: see
 - Supabase: Postgres with Row Level Security, Auth (staff only), Storage
 - Deploys to Vercel. No analytics, no tracking, no cookies for visitors.
 
+## The memorial website (browser only)
+
+[`website/`](website/) holds **Remembered**, a separate, simpler memorial for the Padre Wasson
+family that runs entirely in the browser: no server, no database, no sign-in. Everything is
+saved in the visitor's own browser, with a backup file to keep it safe. It is what
+<https://felixhofmeister1.github.io/Memorial-Page/> shows. See [website/README.md](website/README.md).
+
+The rest of this README is about the full app with a database (this folder).
+
 ## Running it without a database
 
 The app works before there is a database. What it does depends on where it runs
