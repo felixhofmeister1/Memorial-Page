@@ -12,7 +12,8 @@
     "mainSite": "padrewassonfoundation.org",
     "tryAgain": "Noch einmal versuchen",
     "legal": "Rechtliches",
-    "noTracking": "Kein Tracking, keine Analyse, keine Cookies für Besucher."
+    "noTracking": "Kein Tracking, keine Analyse, keine Cookies für Besucher.",
+    "admin": "Verwaltung"
   },
   "Overview": {
     "metaTitle": "In Erinnerung",
@@ -43,7 +44,7 @@
     "died": "Gestorben",
     "nphCountry": "NPH {country}",
     "noPortrait": "Noch kein Foto",
-    "sample": "Dies ist eine Beispielseite. Die Person und ihre Geschichte sind erfunden.",
+    "sample": "Dies ist eine Testseite, keine echte Gedenkseite.",
     "inMemory": "In Erinnerung"
   },
   "Memorial": {
@@ -271,7 +272,7 @@
       "minorAdminOnly": "Nur ein Admin kann das bestätigen.",
       "publishBlockedConsent": "Kann noch nicht veröffentlicht werden: Die Zustimmung ist nicht bestätigt.",
       "publishBlockedMinor": "Kann noch nicht veröffentlicht werden: Ein Admin muss die Seite eines minderjährigen Kindes bestätigen.",
-      "sample": "Beispielseite",
+      "sample": "Testseite",
       "candles": "Kerzen",
       "albums": "Alben",
       "newAlbum": "Neues Album",
@@ -330,6 +331,7 @@
     "errors": {
       "generic": "Das hat nicht geklappt. Bitte versuch es noch einmal.",
       "forbidden": "Das darfst du nicht."
-    }
+    },
+    "localNote": "Lokaler Modus: nur auf diesem Computer, ohne Anmeldung. Alles wird im Ordner data gespeichert."
   }
 }

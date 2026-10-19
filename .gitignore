@@ -44,3 +44,6 @@ next-env.d.ts
 # supabase local
 supabase/.branches
 supabase/.temp
+
+# local mode: memorials and photos saved on this computer (personal data, never commit)
+/data

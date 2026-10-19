@@ -27,10 +27,15 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     // Approved images are served from this site's own address, so visitors' browsers
-    // never contact a third party.
-    return supabaseUrl
-      ? [{ source: '/media/:path*', destination: `${supabaseUrl}/storage/v1/object/public/media/:path*` }]
-      : [];
+    // never contact a third party. `beforeFiles` so that, with a database, this wins over
+    // the local-mode route at src/app/media.
+    return {
+      beforeFiles: supabaseUrl
+        ? [{ source: '/media/:path*', destination: `${supabaseUrl}/storage/v1/object/public/media/:path*` }]
+        : [],
+      afterFiles: [],
+      fallback: [],
+    };
   },
   async headers() {
     return [{ source: '/:path*', headers: securityHeaders }];

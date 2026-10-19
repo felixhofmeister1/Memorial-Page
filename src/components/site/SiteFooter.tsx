@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import { Link } from '@/i18n/navigation';
+import { isLocalMode, isLocalRequest } from '@/lib/mode';
 import { FOUNDATION_EMAIL, FOUNDATION_URL } from '@/lib/site';
 
 /**
@@ -10,6 +11,8 @@ export async function SiteFooter() {
   const t = await getTranslations('Site');
   const to = await getTranslations('Overview');
   const linkClass = 'text-footer-ink no-underline hover:underline';
+  // The way in to the admin, only where it works: local mode, on this computer.
+  const adminLink = isLocalMode() && (await isLocalRequest());
 
   return (
     <footer className="mt-24 border-t border-line bg-footer text-footer-ink">
@@ -68,6 +71,13 @@ export async function SiteFooter() {
                 {t('legalNotice')}
               </Link>
             </li>
+            {adminLink && (
+              <li>
+                <Link href="/admin" className={linkClass}>
+                  {t('admin')}
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       </div>

@@ -5,12 +5,13 @@ import { redirect } from '@/i18n/navigation';
 import { changeStaffRole, inviteStaff, removeStaff } from '@/lib/actions/admin';
 import { requireStaffPage } from '@/lib/auth';
 import { listStaff } from '@/lib/data/admin';
+import { isLocalMode } from '@/lib/mode';
 
 export default async function StaffAdmin({ params }: PageProps<'/[locale]/admin/staff'>) {
   const { locale } = await params;
   setRequestLocale(locale);
   const me = await requireStaffPage();
-  if (me.role !== 'admin') redirect({ href: '/admin', locale });
+  if (me.role !== 'admin' || isLocalMode()) redirect({ href: '/admin', locale });
   const t = await getTranslations('Admin');
   const staff = await listStaff();
   const admins = staff.filter((s) => s.role === 'admin').length;

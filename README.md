@@ -13,28 +13,62 @@ look like the rest of that site. The current look is an **interim design**: see
 - Supabase: Postgres with Row Level Security, Auth (staff only), Storage
 - Deploys to Vercel. No analytics, no tracking, no cookies for visitors.
 
-## Preview mode: no database yet
+## Running it without a database
 
-The site runs without any setup. As long as `SUPABASE_URL` and `SUPABASE_ANON_KEY` are not
-set, it is in **preview mode**:
+The app works before there is a database. What it does depends on where it runs
+(see [`src/lib/mode.ts`](src/lib/mode.ts)):
 
-- The memorials come from [`src/content/memorials.ts`](src/content/memorials.ts) (three invented
-  sample people). Edit that file to change or add pages; the comments at the top explain the fields.
-  Photos go in `public/memorials/<slug>/`.
-- The forms (tribute, candle, request) check what people type, then say that nothing was saved,
-  because there is nowhere to save it yet.
-- There is no admin area and no sign-in: `/admin` does not exist.
+| | Where | Memorials come from | Forms | Admin |
+|---|---|---|---|---|
+| **Local mode** | your own computer (`npm run dev`) | `data/memorials.json` | save | `/admin`, no sign-in |
+| **Preview mode** | deployed, no Supabase settings | `src/content/memorials.ts` | save nothing | none |
+| **Database** | `SUPABASE_URL` and `SUPABASE_ANON_KEY` set | Supabase | save | `/admin`, with sign-in |
+
+### Local mode: the full app on your computer
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000/remembered
+npm run dev
 ```
 
-It also deploys to Vercel as it is: import the repository, no environment variables needed.
+Open <http://localhost:3000/remembered>. The **Admin** link in the footer leads to `/admin`,
+where you can add and edit memorials, upload a portrait and photos, put photos into albums,
+read and approve tributes and candle messages, and turn requests into memorial pages.
+The forms on the public pages work too, so you can try them as a visitor would.
 
-When the database is ready, follow "Deploying" below and set the Supabase variables. The site
-then reads from the database, the forms save, and the admin area with sign-in appears. Nothing
-in the code needs to change.
+- Everything is saved in the `data/` folder: `data/memorials.json` for the text, `data/media/`
+  for approved images, `data/uploads/` for photos waiting to be read. Back up that folder to keep
+  your work. It is in `.gitignore`: it holds personal data and is never committed.
+- On the first start, `data/memorials.json` is filled from `src/content/memorials.ts`
+  (one test page). Delete the `data/` folder to start again from there.
+- The same rules apply as with the database: a page is only published once consent is
+  confirmed, the page of someone who died before 18 needs the extra admin confirmation,
+  and tributes, photos and candle messages appear only after approval.
+- There is no sign-in. The admin only opens on this computer (at `localhost`); from any
+  other address it does not exist. Local mode is never used on a deployed site.
+- To run the built app locally instead of `npm run dev`:
+  `MEMORIAL_LOCAL=true npm run build && MEMORIAL_LOCAL=true npm start`.
+- `MEMORIAL_DATA_DIR=/some/folder` keeps the data somewhere other than `data/`.
+
+### Preview mode: deployed without a database
+
+Deployed (for example to Vercel) without the Supabase settings, the site shows the pages in
+[`src/content/memorials.ts`](src/content/memorials.ts) and nothing else. The forms check what
+people type, then say that nothing was saved. There is no admin area. Edit that file to change
+what the preview shows; the comments at the top explain the fields.
+
+### Moving to the database later
+
+1. Set up Supabase and fill in `.env.local` (see "Deploying" below).
+2. Copy what you made in local mode into the database, images included:
+
+   ```bash
+   npm run import-local
+   ```
+
+   Running it twice does no harm: rows that are already there are skipped.
+3. Create your staff account (see "Deploying"). From then on the app uses the database,
+   and `/admin` asks you to sign in.
 
 ## Pages
 
@@ -183,10 +217,11 @@ foundation prefers to embed them.
   to Published. For a minor, an admin ticks the extra confirmation first.
 - **Preview** shows the page as visitors will see it, also before it is published.
 
-## Removing the sample data
+## Removing the test and sample data
 
-The seed contains three invented people (marked "This is a sample page") and one sample request.
-Before going live, if the seed was ever loaded:
+Pages marked `sample` show "This is a test page, not a real memorial." The app starts with one
+such test page (in `src/content/memorials.ts`); the database seed contains three invented
+people and one sample request, used by `scripts/check-rls.sql`. Before going live:
 
 ```sql
 delete from public.people where sample;
@@ -201,10 +236,15 @@ src/app/[locale]/         pages (public and admin)
 src/app/auth/confirm/     target of staff email links
 src/components/           site (header, footer), memorial, forms, admin
 src/lib/actions/          server actions (public submissions, admin)
-src/lib/data/             database reads
+src/lib/data/             reads (database, local files or the content file)
+src/lib/local/            local mode: file store with the same rules as the database
+src/lib/mode.ts           which mode the app is in
+src/content/memorials.ts  the pages the app starts with (one test page)
+data/                     local mode's saved memorials and images (not committed)
 src/lib/site.ts           the foundation's main menu and links
 src/app/globals.css       design tokens (see DESIGN.md)
 supabase/migrations/      schema, rules, Row Level Security, storage
 supabase/seed.sql         invented sample content
 scripts/check-rls.sql     access rule checks
+scripts/import-local-data.mjs   copies local mode's data into Supabase
 ```

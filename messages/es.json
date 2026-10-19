@@ -12,7 +12,8 @@
     "mainSite": "padrewassonfoundation.org",
     "tryAgain": "Intentar de nuevo",
     "legal": "Legal",
-    "noTracking": "Sin seguimiento, sin análisis, sin cookies para quienes nos visitan."
+    "noTracking": "Sin seguimiento, sin análisis, sin cookies para quienes nos visitan.",
+    "admin": "Administración"
   },
   "Overview": {
     "metaTitle": "En memoria",
@@ -43,7 +44,7 @@
     "died": "Falleció",
     "nphCountry": "NPH {country}",
     "noPortrait": "Todavía sin foto",
-    "sample": "Esta es una página de ejemplo. La persona y su historia son inventadas.",
+    "sample": "Esta es una página de prueba, no una página de recuerdo real.",
     "inMemory": "En memoria"
   },
   "Memorial": {
@@ -271,7 +272,7 @@
       "minorAdminOnly": "Solo un administrador puede dar esta confirmación.",
       "publishBlockedConsent": "Todavía no se puede publicar: falta confirmar el consentimiento.",
       "publishBlockedMinor": "Todavía no se puede publicar: un administrador tiene que confirmar la página de un menor.",
-      "sample": "Página de ejemplo",
+      "sample": "Página de prueba",
       "candles": "Velas",
       "albums": "Álbumes",
       "newAlbum": "Nuevo álbum",
@@ -330,6 +331,7 @@
     "errors": {
       "generic": "No funcionó. Por favor, inténtalo de nuevo.",
       "forbidden": "No tienes permiso para hacer esto."
-    }
+    },
+    "localNote": "Modo local: solo en este ordenador, sin inicio de sesión. Todo se guarda en la carpeta data."
   }
 }

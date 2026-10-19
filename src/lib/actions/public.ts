@@ -4,8 +4,9 @@ import { z } from 'zod';
 import { routing } from '@/i18n/routing';
 import { NPH_COUNTRIES } from '@/lib/countries';
 import { fieldErrorsFrom, textValues, type ErrorCode, type FormState } from '@/lib/forms';
-import { hasFile, processImage, storeImage, deleteImage } from '@/lib/images';
-import { hasDatabase } from '@/lib/mode';
+import { hasFile, imageStorage, processImage, storeImage, deleteImage, type ProcessedImage } from '@/lib/images';
+import { localGet, localInsert, newCandle, newRequest, newTribute } from '@/lib/local/tables';
+import { appMode } from '@/lib/mode';
 import { checkFormToken, honeypotFilled, turnstilePassed, withinRateLimit } from '@/lib/spam';
 import { createPublicClient, createServiceClient } from '@/lib/supabase/clients';
 
@@ -44,6 +45,22 @@ const optionalText = (max: number) =>
     .transform((v) => (v ? v : null));
 
 const requiredText = (max: number) => z.string().trim().min(1).max(max);
+
+/** Local mode: the memorial must exist and be published, as the database's access rules require. */
+async function localPersonOpen(personId: string): Promise<boolean> {
+  const person = await localGet('people', personId);
+  return person?.status === 'published';
+}
+
+/** Checks an optional photo; returns the processed image, nothing, or a form state with the error. */
+async function checkedPhoto(formData: FormData, values: Record<string, string>): Promise<ProcessedImage | null | FormState> {
+  const photo = formData.get('photo');
+  if (!hasFile(photo)) return null;
+  const image = await processImage(photo);
+  if (typeof image === 'string') return { status: 'error', fieldErrors: { photo: image }, values };
+  return image;
+}
+const isFormState = (value: unknown): value is FormState => typeof value === 'object' && value !== null && 'status' in value;
 
 /** Preview mode: the photo is still checked (so errors show as they will later), then dropped. */
 async function previewResult(formData: FormData, values: Record<string, string>, extra: Partial<FormState> = {}): Promise<FormState> {
@@ -84,7 +101,26 @@ export async function submitTribute(_prev: FormState, formData: FormData): Promi
     message: formData.get('message') ?? '',
   });
   if (!parsed.success) return { status: 'error', fieldErrors: fieldErrorsFrom(parsed.error), values };
-  if (!hasDatabase()) return previewResult(formData, values);
+  const mode = appMode();
+  if (mode === 'preview') return previewResult(formData, values);
+  if (mode === 'local') {
+    if (!(await localPersonOpen(parsed.data.personId))) return { status: 'error', formError: 'notFound', values };
+    const image = await checkedPhoto(formData, values);
+    if (isFormState(image)) return image;
+    const photoPath = image ? (await imageStorage().store('uploads', 'tributes', image)).path : null;
+    await localInsert(
+      'tributes',
+      newTribute({
+        person_id: parsed.data.personId,
+        author_name: parsed.data.author_name,
+        author_relation: parsed.data.author_relation,
+        message: parsed.data.message,
+        photo_url: photoPath,
+        locale: localeFrom(formData),
+      }),
+    );
+    return { status: 'success' };
+  }
 
   if (!(await withinRateLimit('tribute', 6, 3600))) {
     return { status: 'error', formError: 'rateLimited', values };
@@ -142,8 +178,16 @@ export async function lightCandle(_prev: FormState, formData: FormData): Promise
     message: formData.get('message') ?? '',
   });
   if (!parsed.success) return { status: 'error', fieldErrors: fieldErrorsFrom(parsed.error), values };
-  if (!hasDatabase()) {
-    return previewResult(formData, values, { withWords: !!(parsed.data.author_name || parsed.data.message) });
+  const withWords = !!(parsed.data.author_name || parsed.data.message);
+  const mode = appMode();
+  if (mode === 'preview') return previewResult(formData, values, { withWords });
+  if (mode === 'local') {
+    if (!(await localPersonOpen(parsed.data.personId))) return { status: 'error', formError: 'notFound', values };
+    await localInsert(
+      'candles',
+      newCandle({ person_id: parsed.data.personId, author_name: parsed.data.author_name, message: parsed.data.message }),
+    );
+    return { status: 'success', withWords };
   }
 
   if (!(await withinRateLimit('candle', 12, 3600))) {
@@ -211,7 +255,15 @@ export async function requestMemorial(_prev: FormState, formData: FormData): Pro
   raw.family_informed = formData.get('family_informed') === 'on';
   const parsed = requestSchema.safeParse(raw);
   if (!parsed.success) return { status: 'error', fieldErrors: fieldErrorsFrom(parsed.error), values };
-  if (!hasDatabase()) return previewResult(formData, values);
+  const mode = appMode();
+  if (mode === 'preview') return previewResult(formData, values);
+  if (mode === 'local') {
+    const image = await checkedPhoto(formData, values);
+    if (isFormState(image)) return image;
+    const photoPath = image ? (await imageStorage().store('uploads', 'requests', image)).path : null;
+    await localInsert('requests', newRequest({ ...parsed.data, photo_path: photoPath, locale: localeFrom(formData) }));
+    return { status: 'success' };
+  }
 
   if (!(await withinRateLimit('request', 3, 3600))) {
     return { status: 'error', formError: 'rateLimited', values };

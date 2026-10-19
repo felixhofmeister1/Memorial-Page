@@ -7,10 +7,17 @@ import { redirect } from '@/i18n/navigation';
 import { ForbiddenError, requireStaff } from '@/lib/auth';
 import { NPH_COUNTRIES } from '@/lib/countries';
 import { env } from '@/lib/env';
-import { deleteImage, hasFile, processImage, publishUpload, storeImage } from '@/lib/images';
+import { deleteImage, hasFile, imageStorage, processImage, publishUpload, storeImage } from '@/lib/images';
+import { readStore, LOCAL_USER_ID } from '@/lib/local/store';
+import { localDelete, localGet, localInsert, localUpdate, newAlbum, newPerson, newPhoto } from '@/lib/local/tables';
+import { isLocalMode } from '@/lib/mode';
 import { slugify, SLUG_PATTERN } from '@/lib/slug';
 import { createServiceClient, createSessionClient } from '@/lib/supabase/clients';
 import type { DatePrecision, MemorialStatus, PersonRow, StaffRole } from '@/lib/supabase/database.types';
+
+// Every action checks the staff member first (requireStaff). With a database, changes go
+// through their own session so Row Level Security applies; in local mode (no database, on
+// your own computer) they go to the local store, which applies the same rules.
 
 /** `message` is a key under Admin.* in the message files. */
 export type AdminFormState = { status: 'idle' | 'success' | 'error'; message?: string };
@@ -53,10 +60,11 @@ const formString = (formData: FormData, name: string) => {
 };
 
 // ---------------------------------------------------------------------------
-// Signing in and out
+// Signing in and out (database mode only; local mode has no sign-in)
 // ---------------------------------------------------------------------------
 
 export async function signIn(_prev: AdminFormState, formData: FormData): Promise<AdminFormState> {
+  if (isLocalMode()) return localeRedirect('/admin');
   const supabase = await createSessionClient();
   const { error } = await supabase.auth.signInWithPassword({
     email: formString(formData, 'email').trim(),
@@ -67,12 +75,14 @@ export async function signIn(_prev: AdminFormState, formData: FormData): Promise
 }
 
 export async function signOut() {
+  if (isLocalMode()) return localeRedirect('/remembered');
   const supabase = await createSessionClient();
   await supabase.auth.signOut();
   return localeRedirect('/admin/login');
 }
 
 export async function sendPasswordReset(_prev: AdminFormState, formData: FormData): Promise<AdminFormState> {
+  if (isLocalMode()) return { status: 'error', message: 'errors.forbidden' };
   const supabase = await createSessionClient();
   // Same answer whether or not the address exists, so nobody can probe for staff accounts.
   await supabase.auth.resetPasswordForEmail(formString(formData, 'email').trim(), {
@@ -82,6 +92,7 @@ export async function sendPasswordReset(_prev: AdminFormState, formData: FormDat
 }
 
 export async function setPassword(_prev: AdminFormState, formData: FormData): Promise<AdminFormState> {
+  if (isLocalMode()) return { status: 'error', message: 'errors.forbidden' };
   const supabase = await createSessionClient();
   const password = formString(formData, 'password');
   if (password.length < 10) return { status: 'error', message: 'errors.generic' };
@@ -95,10 +106,15 @@ export async function setPassword(_prev: AdminFormState, formData: FormData): Pr
 // ---------------------------------------------------------------------------
 
 async function uniqueSlug(base: string, ignoreId?: string): Promise<string> {
-  const supabase = await createSessionClient();
   const root = slugify(base) || 'memorial';
-  const { data } = await supabase.from('people').select('id, slug').like('slug', `${root}%`);
-  const taken = new Set((data ?? []).filter((r) => r.id !== ignoreId).map((r) => r.slug));
+  let rows: { id: string; slug: string }[];
+  if (isLocalMode()) {
+    rows = (await readStore()).people.filter((p) => p.slug.startsWith(root));
+  } else {
+    const supabase = await createSessionClient();
+    rows = (await supabase.from('people').select('id, slug').like('slug', `${root}%`)).data ?? [];
+  }
+  const taken = new Set(rows.filter((r) => r.id !== ignoreId).map((r) => r.slug));
   if (!taken.has(root) && !['request', 'new'].includes(root)) return root;
   for (let n = 2; ; n++) if (!taken.has(`${root}-${n}`)) return `${root}-${n}`;
 }
@@ -107,16 +123,20 @@ export async function createMemorial(_prev: AdminFormState, formData: FormData):
   let id: string;
   try {
     const staff = await requireStaff();
-    const name = formString(formData, 'name').trim();
+    const name = formString(formData, 'name').trim().slice(0, 200);
     if (!name) return { status: 'error', message: 'errors.generic' };
-    const supabase = await createSessionClient();
-    const { data, error } = await supabase
-      .from('people')
-      .insert({ name, slug: await uniqueSlug(name), status: 'draft', created_by: staff.userId })
-      .select('id')
-      .single();
-    if (error) throw error;
-    id = data.id;
+    if (isLocalMode()) {
+      id = (await localInsert('people', newPerson({ name, slug: await uniqueSlug(name) }))).id;
+    } else {
+      const supabase = await createSessionClient();
+      const { data, error } = await supabase
+        .from('people')
+        .insert({ name, slug: await uniqueSlug(name), status: 'draft', created_by: staff.userId })
+        .select('id')
+        .single();
+      if (error) throw error;
+      id = data.id;
+    }
   } catch (error) {
     return { status: 'error', message: errorKey(error) };
   }
@@ -179,18 +199,35 @@ export async function updateMemorial(personId: string, _prev: AdminFormState, fo
       death_date_precision: parsed.data.death_date_precision as DatePrecision,
       status: parsed.data.status as MemorialStatus,
     };
-    // Only admins see the confirmation box; the database checks the role again.
-    if (staff.role === 'admin' && formData.has('minor_confirm_present')) {
-      const confirm = formData.get('minor_confirm') === 'on';
-      const supabase = await createSessionClient();
-      const { data: current } = await supabase.from('people').select('minor_confirmed_at').eq('id', personId).single();
-      if (confirm && !current?.minor_confirmed_at) update.minor_confirmed_at = new Date().toISOString();
-      if (!confirm && current?.minor_confirmed_at) update.minor_confirmed_at = null;
-    }
 
-    const supabase = await createSessionClient();
-    const { error } = await supabase.from('people').update(update).eq('id', personId);
-    if (error) throw error;
+    if (isLocalMode()) {
+      // You are the only admin here, so the minor confirmation is yours to give.
+      if (formData.has('minor_confirm_present')) {
+        const confirm = formData.get('minor_confirm') === 'on';
+        const current = await localGet('people', personId);
+        if (confirm && !current?.minor_confirmed_at) {
+          update.minor_confirmed_at = new Date().toISOString();
+          update.minor_confirmed_by = LOCAL_USER_ID;
+        }
+        if (!confirm && current?.minor_confirmed_at) {
+          update.minor_confirmed_at = null;
+          update.minor_confirmed_by = null;
+        }
+      }
+      await localUpdate('people', personId, update);
+    } else {
+      // Only admins see the confirmation box; the database checks the role again.
+      if (staff.role === 'admin' && formData.has('minor_confirm_present')) {
+        const confirm = formData.get('minor_confirm') === 'on';
+        const supabase = await createSessionClient();
+        const { data: current } = await supabase.from('people').select('minor_confirmed_at').eq('id', personId).single();
+        if (confirm && !current?.minor_confirmed_at) update.minor_confirmed_at = new Date().toISOString();
+        if (!confirm && current?.minor_confirmed_at) update.minor_confirmed_at = null;
+      }
+      const supabase = await createSessionClient();
+      const { error } = await supabase.from('people').update(update).eq('id', personId);
+      if (error) throw error;
+    }
   } catch (error) {
     return { status: 'error', message: errorKey(error) };
   }
@@ -200,6 +237,17 @@ export async function updateMemorial(personId: string, _prev: AdminFormState, fo
 
 export async function deleteMemorial(personId: string) {
   await requireStaff('admin');
+  if (isLocalMode()) {
+    const data = await readStore();
+    const images = [
+      data.people.find((p) => p.id === personId)?.portrait_url,
+      ...data.photos.filter((p) => p.person_id === personId).map((p) => p.storage_path),
+      ...data.tributes.filter((t) => t.person_id === personId).map((t) => t.photo_url),
+    ];
+    await localDelete('people', personId);
+    for (const path of images) await imageStorage().remove(path);
+    return localeRedirect('/admin/memorials');
+  }
   const supabase = await createSessionClient();
   const { data: person } = await supabase.from('people').select('portrait_url').eq('id', personId).single();
   const { data: photos } = await supabase.from('photos').select('storage_path').eq('person_id', personId);
@@ -220,17 +268,25 @@ export async function uploadPortrait(personId: string, _prev: AdminFormState, fo
     if (!hasFile(file)) return { status: 'error', message: 'errors.generic' };
     const image = await processImage(file);
     if (typeof image === 'string') return { status: 'error', message: 'errors.generic' };
-    const supabase = await createSessionClient();
-    const { data: person, error: readError } = await supabase.from('people').select('portrait_url').eq('id', personId).single();
-    if (readError) throw readError;
-    const service = createServiceClient();
-    const { path } = await storeImage(service, 'media', `portraits/${personId}`, image);
-    const { error } = await supabase.from('people').update({ portrait_url: path }).eq('id', personId);
-    if (error) {
-      await deleteImage(service, path);
-      throw error;
+    if (isLocalMode()) {
+      const storage = imageStorage();
+      const previous = (await localGet('people', personId))?.portrait_url;
+      const { path } = await storage.store('media', `portraits/${personId}`, image);
+      await localUpdate('people', personId, { portrait_url: path });
+      await storage.remove(previous);
+    } else {
+      const supabase = await createSessionClient();
+      const { data: person, error: readError } = await supabase.from('people').select('portrait_url').eq('id', personId).single();
+      if (readError) throw readError;
+      const service = createServiceClient();
+      const { path } = await storeImage(service, 'media', `portraits/${personId}`, image);
+      const { error } = await supabase.from('people').update({ portrait_url: path }).eq('id', personId);
+      if (error) {
+        await deleteImage(service, path);
+        throw error;
+      }
+      await deleteImage(service, person.portrait_url);
     }
-    await deleteImage(service, person.portrait_url);
   } catch (error) {
     return { status: 'error', message: errorKey(error) };
   }
@@ -240,6 +296,13 @@ export async function uploadPortrait(personId: string, _prev: AdminFormState, fo
 
 export async function removePortrait(personId: string) {
   await requireStaff();
+  if (isLocalMode()) {
+    const previous = (await localGet('people', personId))?.portrait_url;
+    await localUpdate('people', personId, { portrait_url: null });
+    await imageStorage().remove(previous);
+    refresh();
+    return;
+  }
   const supabase = await createSessionClient();
   const { data: person } = await supabase.from('people').select('portrait_url').eq('id', personId).single();
   const { error } = await supabase.from('people').update({ portrait_url: null }).eq('id', personId);
@@ -256,14 +319,16 @@ export async function createAlbum(personId: string, formData: FormData) {
   await requireStaff();
   const title = formString(formData, 'title').trim().slice(0, 200);
   if (!title) return;
+  const description = formString(formData, 'description').trim().slice(0, 2000) || null;
+  if (isLocalMode()) {
+    const count = (await readStore()).albums.filter((a) => a.person_id === personId).length;
+    await localInsert('albums', newAlbum({ person_id: personId, title, description, sort_order: count }));
+    refresh();
+    return;
+  }
   const supabase = await createSessionClient();
   const { count } = await supabase.from('albums').select('id', { count: 'exact', head: true }).eq('person_id', personId);
-  const { error } = await supabase.from('albums').insert({
-    person_id: personId,
-    title,
-    description: formString(formData, 'description').trim().slice(0, 2000) || null,
-    sort_order: count ?? 0,
-  });
+  const { error } = await supabase.from('albums').insert({ person_id: personId, title, description, sort_order: count ?? 0 });
   if (error) throw error;
   refresh();
 }
@@ -272,19 +337,27 @@ export async function updateAlbum(albumId: string, formData: FormData) {
   await requireStaff();
   const title = formString(formData, 'title').trim().slice(0, 200);
   if (!title) return;
+  const description = formString(formData, 'description').trim().slice(0, 2000) || null;
+  if (isLocalMode()) {
+    await localUpdate('albums', albumId, { title, description });
+    refresh();
+    return;
+  }
   const supabase = await createSessionClient();
-  const { error } = await supabase
-    .from('albums')
-    .update({ title, description: formString(formData, 'description').trim().slice(0, 2000) || null })
-    .eq('id', albumId);
+  const { error } = await supabase.from('albums').update({ title, description }).eq('id', albumId);
   if (error) throw error;
   refresh();
 }
 
 export async function deleteAlbum(albumId: string) {
   await requireStaff();
-  const supabase = await createSessionClient();
   // Photos stay; they just leave the album.
+  if (isLocalMode()) {
+    await localDelete('albums', albumId);
+    refresh();
+    return;
+  }
+  const supabase = await createSessionClient();
   const { error } = await supabase.from('albums').delete().eq('id', albumId);
   if (error) throw error;
   refresh();
@@ -297,26 +370,49 @@ export async function addPhoto(personId: string, _prev: AdminFormState, formData
     if (!hasFile(file)) return { status: 'error', message: 'errors.generic' };
     const image = await processImage(file);
     if (typeof image === 'string') return { status: 'error', message: 'errors.generic' };
-    const service = createServiceClient();
-    const { path, thumbPath } = await storeImage(service, 'media', `photos/${personId}`, image);
-    const supabase = await createSessionClient();
-    const albumId = formString(formData, 'album_id');
-    const { count } = await supabase.from('photos').select('id', { count: 'exact', head: true }).eq('person_id', personId);
-    const { error } = await supabase.from('photos').insert({
-      person_id: personId,
-      album_id: albumId || null,
-      storage_path: path,
-      thumb_path: thumbPath,
-      width: image.width,
-      height: image.height,
-      caption: formString(formData, 'caption').trim().slice(0, 1000) || null,
-      contributed_by: formString(formData, 'contributed_by').trim().slice(0, 120) || null,
-      status: 'approved', // added by staff, so already reviewed
-      sort_order: count ?? 0,
-    });
-    if (error) {
-      await deleteImage(service, path);
-      throw error;
+    const albumId = formString(formData, 'album_id') || null;
+    const caption = formString(formData, 'caption').trim().slice(0, 1000) || null;
+    const contributedBy = formString(formData, 'contributed_by').trim().slice(0, 120) || null;
+
+    if (isLocalMode()) {
+      const { path, thumbPath } = await imageStorage().store('media', `photos/${personId}`, image);
+      const count = (await readStore()).photos.filter((p) => p.person_id === personId).length;
+      await localInsert(
+        'photos',
+        newPhoto({
+          person_id: personId,
+          album_id: albumId,
+          storage_path: path,
+          thumb_path: thumbPath,
+          width: image.width,
+          height: image.height,
+          caption,
+          contributed_by: contributedBy,
+          status: 'approved', // added by you, so already reviewed
+          sort_order: count,
+        }),
+      );
+    } else {
+      const service = createServiceClient();
+      const { path, thumbPath } = await storeImage(service, 'media', `photos/${personId}`, image);
+      const supabase = await createSessionClient();
+      const { count } = await supabase.from('photos').select('id', { count: 'exact', head: true }).eq('person_id', personId);
+      const { error } = await supabase.from('photos').insert({
+        person_id: personId,
+        album_id: albumId,
+        storage_path: path,
+        thumb_path: thumbPath,
+        width: image.width,
+        height: image.height,
+        caption,
+        contributed_by: contributedBy,
+        status: 'approved', // added by staff, so already reviewed
+        sort_order: count ?? 0,
+      });
+      if (error) {
+        await deleteImage(service, path);
+        throw error;
+      }
     }
   } catch (error) {
     return { status: 'error', message: errorKey(error) };
@@ -327,22 +423,29 @@ export async function addPhoto(personId: string, _prev: AdminFormState, formData
 
 export async function updatePhoto(photoId: string, formData: FormData) {
   await requireStaff();
+  const patch = {
+    album_id: formString(formData, 'album_id') || null,
+    caption: formString(formData, 'caption').trim().slice(0, 1000) || null,
+    contributed_by: formString(formData, 'contributed_by').trim().slice(0, 120) || null,
+  };
+  if (isLocalMode()) {
+    await localUpdate('photos', photoId, patch);
+    refresh();
+    return;
+  }
   const supabase = await createSessionClient();
-  const albumId = formString(formData, 'album_id');
-  const { error } = await supabase
-    .from('photos')
-    .update({
-      album_id: albumId || null,
-      caption: formString(formData, 'caption').trim().slice(0, 1000) || null,
-      contributed_by: formString(formData, 'contributed_by').trim().slice(0, 120) || null,
-    })
-    .eq('id', photoId);
+  const { error } = await supabase.from('photos').update(patch).eq('id', photoId);
   if (error) throw error;
   refresh();
 }
 
 export async function setPhotoHidden(photoId: string, hidden: boolean) {
   await requireStaff();
+  if (isLocalMode()) {
+    await localUpdate('photos', photoId, { hidden });
+    refresh();
+    return;
+  }
   const supabase = await createSessionClient();
   const { error } = await supabase.from('photos').update({ hidden }).eq('id', photoId);
   if (error) throw error;
@@ -351,6 +454,22 @@ export async function setPhotoHidden(photoId: string, hidden: boolean) {
 
 export async function movePhoto(photoId: string, direction: -1 | 1) {
   await requireStaff();
+  if (isLocalMode()) {
+    const data = await readStore();
+    const photo = data.photos.find((p) => p.id === photoId);
+    if (!photo) return;
+    const ids = data.photos
+      .filter((p) => p.person_id === photo.person_id && p.album_id === photo.album_id)
+      .sort((a, b) => a.sort_order - b.sort_order || a.created_at.localeCompare(b.created_at))
+      .map((p) => p.id);
+    const from = ids.indexOf(photoId);
+    const to = from + direction;
+    if (from < 0 || to < 0 || to >= ids.length) return;
+    [ids[from], ids[to]] = [ids[to], ids[from]];
+    for (const [index, id] of ids.entries()) await localUpdate('photos', id, { sort_order: index });
+    refresh();
+    return;
+  }
   const supabase = await createSessionClient();
   const { data: photo } = await supabase.from('photos').select('person_id, album_id').eq('id', photoId).single();
   if (!photo) return;
@@ -368,6 +487,12 @@ export async function movePhoto(photoId: string, direction: -1 | 1) {
 
 export async function deletePhoto(photoId: string) {
   await requireStaff();
+  if (isLocalMode()) {
+    const photo = await localDelete('photos', photoId);
+    await imageStorage().remove(photo?.storage_path);
+    refresh();
+    return;
+  }
   const supabase = await createSessionClient();
   const { data: photo } = await supabase.from('photos').select('storage_path').eq('id', photoId).single();
   const { error } = await supabase.from('photos').delete().eq('id', photoId);
@@ -382,6 +507,27 @@ export async function deletePhoto(photoId: string) {
 
 export async function moderateTribute(tributeId: string, decision: 'approve' | 'reject' | 'hide' | 'show' | 'delete') {
   await requireStaff();
+
+  if (isLocalMode()) {
+    const tribute = await localGet('tributes', tributeId);
+    if (!tribute) return;
+    const storage = imageStorage();
+    if (decision === 'delete') {
+      await localDelete('tributes', tributeId);
+      await storage.remove(tribute.photo_url);
+    } else if (decision === 'approve') {
+      const photo = tribute.photo_url ? await storage.publish(tribute.photo_url, `tributes/${tribute.person_id}`) : null;
+      await localUpdate('tributes', tributeId, { status: 'approved', hidden: false, photo_url: photo });
+    } else if (decision === 'reject') {
+      await localUpdate('tributes', tributeId, { status: 'rejected', photo_url: null });
+      await storage.remove(tribute.photo_url);
+    } else {
+      await localUpdate('tributes', tributeId, { hidden: decision === 'hide' });
+    }
+    refresh();
+    return;
+  }
+
   const supabase = await createSessionClient();
   const { data: tribute, error: readError } = await supabase
     .from('tributes')
@@ -413,6 +559,13 @@ export async function moderateTribute(tributeId: string, decision: 'approve' | '
 
 export async function moderateCandle(candleId: string, decision: 'approve' | 'reject' | 'hide' | 'delete') {
   await requireStaff();
+  if (isLocalMode()) {
+    if (decision === 'delete') await localDelete('candles', candleId);
+    else if (decision === 'hide') await localUpdate('candles', candleId, { hidden: true });
+    else await localUpdate('candles', candleId, { message_status: decision === 'approve' ? 'approved' : 'rejected' });
+    refresh();
+    return;
+  }
   const supabase = await createSessionClient();
   const { error } =
     decision === 'delete'
@@ -437,12 +590,14 @@ export async function updateRequest(requestId: string, _prev: AdminFormState, fo
   try {
     await requireStaff();
     const status = z.enum(REQUEST_STATUSES).parse(formString(formData, 'status'));
-    const supabase = await createSessionClient();
-    const { error } = await supabase
-      .from('memorial_requests')
-      .update({ status, staff_note: formString(formData, 'staff_note').trim().slice(0, 4000) || null })
-      .eq('id', requestId);
-    if (error) throw error;
+    const staffNote = formString(formData, 'staff_note').trim().slice(0, 4000) || null;
+    if (isLocalMode()) {
+      await localUpdate('requests', requestId, { status, staff_note: staffNote });
+    } else {
+      const supabase = await createSessionClient();
+      const { error } = await supabase.from('memorial_requests').update({ status, staff_note: staffNote }).eq('id', requestId);
+      if (error) throw error;
+    }
   } catch (error) {
     return { status: 'error', message: errorKey(error) };
   }
@@ -450,8 +605,52 @@ export async function updateRequest(requestId: string, _prev: AdminFormState, fo
   return { status: 'success', message: 'memorials.saved' };
 }
 
+function consentNoteFrom(request: {
+  requester_name: string;
+  requester_relation: string;
+  requester_email: string;
+  family_informed: boolean;
+  birth_date: string | null;
+  death_date: string | null;
+}) {
+  return [
+    `Request from ${request.requester_name} (${request.requester_relation}), ${request.requester_email}.`,
+    request.family_informed ? 'Requester says the family knows and agrees.' : 'Requester did not confirm that the family agrees.',
+    request.birth_date ? `Born (as given): ${request.birth_date}.` : null,
+    request.death_date ? `Died (as given): ${request.death_date}.` : null,
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 export async function createMemorialFromRequest(requestId: string) {
   const staff = await requireStaff();
+
+  if (isLocalMode()) {
+    const request = await localGet('requests', requestId);
+    if (!request) return;
+    if (request.person_id) return localeRedirect(`/admin/memorials/${request.person_id}`);
+    const person = await localInsert(
+      'people',
+      newPerson({
+        name: request.person_name,
+        slug: await uniqueSlug(request.person_name),
+        country: request.country,
+        home: request.home,
+        story: request.story,
+        minor: request.is_minor,
+        status: 'pending',
+        consent_note: consentNoteFrom(request),
+      }),
+    );
+    if (request.photo_path) {
+      const portrait = await imageStorage().publish(request.photo_path, `portraits/${person.id}`);
+      await localUpdate('people', person.id, { portrait_url: portrait });
+    }
+    await localUpdate('requests', requestId, { person_id: person.id, status: 'in_progress', photo_path: null });
+    return localeRedirect(`/admin/memorials/${person.id}`);
+  }
+
   const supabase = await createSessionClient();
   const { data: request, error: readError } = await supabase.from('memorial_requests').select('*').eq('id', requestId).single();
   if (readError) throw readError;
@@ -467,14 +666,7 @@ export async function createMemorialFromRequest(requestId: string) {
       story: request.story,
       minor: request.is_minor,
       status: 'pending',
-      consent_note: [
-        `Request from ${request.requester_name} (${request.requester_relation}), ${request.requester_email}.`,
-        request.family_informed ? 'Requester says the family knows and agrees.' : 'Requester did not confirm that the family agrees.',
-        request.birth_date ? `Born (as given): ${request.birth_date}.` : null,
-        request.death_date ? `Died (as given): ${request.death_date}.` : null,
-      ]
-        .filter(Boolean)
-        .join('\n'),
+      consent_note: consentNoteFrom(request),
       created_by: staff.userId,
     })
     .select('id')
@@ -490,7 +682,7 @@ export async function createMemorialFromRequest(requestId: string) {
 }
 
 // ---------------------------------------------------------------------------
-// Staff (admins only)
+// Staff (admins only; database mode only — local mode has no staff accounts)
 // ---------------------------------------------------------------------------
 
 async function adminCount() {
@@ -502,6 +694,7 @@ async function adminCount() {
 export async function inviteStaff(_prev: AdminFormState, formData: FormData): Promise<AdminFormState> {
   try {
     await requireStaff('admin');
+    if (isLocalMode()) throw new ForbiddenError();
     const email = z.email().parse(formString(formData, 'email').trim().toLowerCase());
     const role = z.enum(['admin', 'editor']).parse(formString(formData, 'role')) as StaffRole;
     const service = createServiceClient();
@@ -531,6 +724,7 @@ export async function inviteStaff(_prev: AdminFormState, formData: FormData): Pr
 
 export async function changeStaffRole(userId: string, role: StaffRole) {
   await requireStaff('admin');
+  if (isLocalMode()) throw new ForbiddenError();
   if (role === 'editor' && (await adminCount()) <= 1) {
     const supabase = await createSessionClient();
     const { data } = await supabase.from('admin_users').select('role').eq('user_id', userId).single();
@@ -544,6 +738,7 @@ export async function changeStaffRole(userId: string, role: StaffRole) {
 
 export async function removeStaff(userId: string) {
   await requireStaff('admin');
+  if (isLocalMode()) throw new ForbiddenError();
   const supabase = await createSessionClient();
   const { data } = await supabase.from('admin_users').select('role').eq('user_id', userId).single();
   if (data?.role === 'admin' && (await adminCount()) <= 1) return; // keep at least one admin

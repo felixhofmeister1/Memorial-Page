@@ -3,8 +3,22 @@ import { createServiceClient, createSessionClient } from '@/lib/supabase/clients
 import type { MemorialRequestRow, PersonRow } from '@/lib/supabase/database.types';
 import { isPendingUpload, publicImageUrl, splitStoragePath } from '@/lib/media';
 import type { PublicAlbum, PublicPhoto } from '@/lib/data/public';
+import {
+  localDashboardCounts,
+  localKnownHomes,
+  localListMemorials,
+  localListRequests,
+  localMemorialContent,
+  localMemorialMedia,
+  localPendingCandles,
+  localPendingTributes,
+  localRecentTributes,
+} from '@/lib/local/queries';
+import { localGet } from '@/lib/local/tables';
+import { isLocalMode } from '@/lib/mode';
 
 // All reads here use the staff member's own session, so Row Level Security applies.
+// In local mode (no database, on your own computer) they read the local store instead.
 
 function check<T>(result: { data: T | null; error: unknown }): T {
   if (result.error) throw result.error;
@@ -12,6 +26,7 @@ function check<T>(result: { data: T | null; error: unknown }): T {
 }
 
 export async function dashboardCounts() {
+  if (isLocalMode()) return localDashboardCounts();
   const supabase = await createSessionClient();
   const count = async (query: PromiseLike<{ count: number | null; error: unknown }>) => {
     const { count, error } = await query;
@@ -28,6 +43,7 @@ export async function dashboardCounts() {
 }
 
 export async function listMemorials() {
+  if (isLocalMode()) return localListMemorials();
   const supabase = await createSessionClient();
   return check(
     await supabase
@@ -38,11 +54,13 @@ export async function listMemorials() {
 }
 
 export async function getMemorial(id: string): Promise<PersonRow | null> {
+  if (isLocalMode()) return localGet('people', id);
   const supabase = await createSessionClient();
   return check(await supabase.from('people').select('*').eq('id', id).maybeSingle());
 }
 
 export async function getMemorialMedia(personId: string) {
+  if (isLocalMode()) return localMemorialMedia(personId);
   const supabase = await createSessionClient();
   const [albums, photos] = await Promise.all([
     supabase.from('albums').select('*').eq('person_id', personId).order('sort_order').order('created_at'),
@@ -52,6 +70,7 @@ export async function getMemorialMedia(personId: string) {
 }
 
 export async function knownHomes(): Promise<string[]> {
+  if (isLocalMode()) return localKnownHomes();
   const supabase = await createSessionClient();
   const rows = check(await supabase.from('people').select('home').not('home', 'is', null));
   return [...new Set((rows ?? []).map((r) => r.home as string))].sort((a, b) => a.localeCompare(b));
@@ -59,6 +78,7 @@ export async function knownHomes(): Promise<string[]> {
 
 /** What the public page would show, for the preview of an unpublished memorial. */
 export async function getPreviewContent(personId: string) {
+  if (isLocalMode()) return localMemorialContent(personId);
   const supabase = await createSessionClient();
   const [albums, photos, tributes, candles] = await Promise.all([
     supabase.from('albums').select('id, title, description').eq('person_id', personId).order('sort_order'),
@@ -94,6 +114,7 @@ export async function getPreviewContent(personId: string) {
 }
 
 export async function pendingTributes() {
+  if (isLocalMode()) return localPendingTributes();
   const supabase = await createSessionClient();
   return check(
     await supabase
@@ -106,6 +127,7 @@ export async function pendingTributes() {
 }
 
 export async function recentTributes() {
+  if (isLocalMode()) return localRecentTributes();
   const supabase = await createSessionClient();
   return check(
     await supabase
@@ -120,6 +142,7 @@ export async function recentTributes() {
 type TributeWithPerson = import('@/lib/supabase/database.types').TributeRow & { people: { name: string; slug: string } | null };
 
 export async function pendingCandles() {
+  if (isLocalMode()) return localPendingCandles();
   const supabase = await createSessionClient();
   return check(
     await supabase
@@ -132,6 +155,7 @@ export async function pendingCandles() {
 }
 
 export async function listRequests() {
+  if (isLocalMode()) return localListRequests();
   const supabase = await createSessionClient();
   return check(
     await supabase
@@ -142,12 +166,14 @@ export async function listRequests() {
 }
 
 export async function getRequest(id: string): Promise<MemorialRequestRow | null> {
+  if (isLocalMode()) return localGet('requests', id);
   const supabase = await createSessionClient();
   return check(await supabase.from('memorial_requests').select('*').eq('id', id).maybeSingle());
 }
 
 /** Staff list with email addresses (emails live in the Auth schema, so this needs the service role). */
 export async function listStaff() {
+  if (isLocalMode()) return []; // no staff accounts without a database
   const supabase = await createSessionClient();
   const rows = check(await supabase.from('admin_users').select('*').order('created_at')) ?? [];
   const service = createServiceClient();
@@ -167,6 +193,7 @@ export async function viewableImageUrl(path: string | null | undefined): Promise
   if (!path) return null;
   if (!isPendingUpload(path)) return publicImageUrl(path);
   const { key } = splitStoragePath(path);
+  if (isLocalMode()) return `/local-uploads/${key}`;
   const { data } = await createServiceClient().storage.from('uploads').createSignedUrl(key, 60 * 30);
   return data?.signedUrl ?? null;
 }

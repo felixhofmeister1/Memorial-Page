@@ -2,7 +2,8 @@ import 'server-only';
 import { cache } from 'react';
 import { memorials } from '@/content/memorials';
 import { yearOf } from '@/lib/dates';
-import { hasDatabase } from '@/lib/mode';
+import { localMemorialContent, localPublishedPeople, localPublishedPerson } from '@/lib/local/queries';
+import { appMode } from '@/lib/mode';
 import { createPublicClient } from '@/lib/supabase/clients';
 import type { PersonRow } from '@/lib/supabase/database.types';
 import type { PersonSummary, PublicAlbum, PublicCandle, PublicPerson, PublicPhoto, PublicTribute } from './types';
@@ -22,9 +23,9 @@ export function normalizeForSearch(value: string): string {
 }
 
 export const listPublishedPeople = cache(async (): Promise<PersonSummary[]> => {
-  if (!hasDatabase()) {
-    return [...memorials].sort((a, b) => a.name.localeCompare(b.name));
-  }
+  const mode = appMode();
+  if (mode === 'local') return localPublishedPeople();
+  if (mode === 'preview') return [...memorials].sort((a, b) => a.name.localeCompare(b.name));
   const supabase = createPublicClient();
   const { data, error } = await supabase
     .from('people')
@@ -69,9 +70,9 @@ export function filterOptions(people: PersonSummary[]) {
 }
 
 export const getPublishedPerson = cache(async (slug: string): Promise<PublicPerson | null> => {
-  if (!hasDatabase()) {
-    return memorials.find((m) => m.slug === slug) ?? null;
-  }
+  const mode = appMode();
+  if (mode === 'local') return localPublishedPerson(slug);
+  if (mode === 'preview') return memorials.find((m) => m.slug === slug) ?? null;
   const supabase = createPublicClient();
   const { data, error } = await supabase
     .from('people')
@@ -87,7 +88,9 @@ export const getPublishedPerson = cache(async (slug: string): Promise<PublicPers
 export async function getMemorialContent(
   personId: string,
 ): Promise<{ albums: PublicAlbum[]; tributes: PublicTribute[]; candles: PublicCandle[] }> {
-  if (!hasDatabase()) {
+  const mode = appMode();
+  if (mode === 'local') return localMemorialContent(personId);
+  if (mode === 'preview') {
     const memorial = memorials.find((m) => m.id === personId);
     const newestFirst = <T extends { created_at: string }>(items: T[]) =>
       [...items].sort((a, b) => b.created_at.localeCompare(a.created_at));

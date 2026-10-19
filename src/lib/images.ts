@@ -2,7 +2,10 @@ import 'server-only';
 import crypto from 'node:crypto';
 import sharp from 'sharp';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { publishLocal, removeLocal, storeLocal } from '@/lib/local/media';
 import { splitStoragePath } from '@/lib/media';
+import { hasDatabase } from '@/lib/mode';
+import { createServiceClient } from '@/lib/supabase/clients';
 
 export const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
 const ACCEPTED_FORMATS = new Set(['jpeg', 'png', 'webp']);
@@ -107,4 +110,38 @@ export async function deleteImage(client: SupabaseClient, path: string | null | 
   const { bucket, key } = splitStoragePath(path);
   if (bucket !== 'media' && bucket !== 'uploads') return;
   await client.storage.from(bucket).remove([key, thumbPathFor(key)]);
+}
+
+// ---------------------------------------------------------------------------
+// Where images go: Supabase Storage with a database, the data/ folder without one.
+// ---------------------------------------------------------------------------
+
+export type ImageStorage = {
+  store(bucket: 'media' | 'uploads', folder: string, image: ProcessedImage): Promise<{ path: string; thumbPath: string }>;
+  /** Moves an approved upload to the public images. Returns the new path. */
+  publish(uploadPath: string, folder: string): Promise<string>;
+  remove(path: string | null | undefined): Promise<void>;
+};
+
+export function imageStorage(): ImageStorage {
+  if (hasDatabase()) {
+    const client = createServiceClient();
+    return {
+      store: (bucket, folder, image) => storeImage(client, bucket, folder, image),
+      publish: (uploadPath, folder) => publishUpload(client, uploadPath, folder),
+      remove: (p) => deleteImage(client, p),
+    };
+  }
+  return {
+    store: (bucket, folder, image) => storeLocal(bucket, folder, image.full, image.thumb),
+    publish: async (uploadPath, folder) => {
+      const { bucket, key } = splitStoragePath(uploadPath);
+      return bucket === 'uploads' ? publishLocal(key, folder) : uploadPath;
+    },
+    remove: async (p) => {
+      if (!p || p.startsWith('/')) return;
+      const { bucket, key } = splitStoragePath(p);
+      if (bucket === 'media' || bucket === 'uploads') await removeLocal(bucket, key);
+    },
+  };
 }
